@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>T-Mobile Memo</title>
+    <link async="true" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">  
+    <link async="true" rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <form id="memo-form" onsubmit="generateMemo();return false">
+        <div class="row">
+            <div class="col-sm-4 my-auto labels"><label>Call Direction</label></div>
+            <div class="col-sm-4 inputs">
+                <input  type="radio" id="inbound" name="call_direction" value="Inbound"/>
+                <label for="inbound">Inbound</label><br>
+                <input  type="radio" id="outbound" name="call_direction" value="Outbound"/>
+                <label for="outbound">Outbound</label><br>   
+            </div>
+            <div class="col-sm-4 error-message" hidden="" id="call_direction-error"></div>
+        </div>
+        
+        <div class="row">
+            <div class="col-sm-4 labels"><label>Contact Attempt</label></div>
+            <div class="col-sm-4 inputs"><select  id="contact_attempt" name="contact_attempt" class="form-input">
+                    <option></option>
+                    <option value="First">First</option>
+                    <option value="Second">Second</option>
+                    <option value="Final">Final</option>
+                </select>
+            </div>
+            <div class="col-sm-4 error-message" hidden="" id="contact_attempt-error"></div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-4 labels"><label>Survivor Name</label></div>
+            <div class="col-sm-4 inputs"><input  type="text" id="survivor_name" name="survivor_name" class="form-input"/></div>
+            <div class="col-sm-4 error-message" hidden="" id="survivor_name-error"></div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-4 labels"><label>Phone Number Called</label></div>
+            <div class="col-sm-4 inputs"><input  type="tel" placeholder="+1 000-000-0000" id="phone_number" name="phone_number" class="form-input"/></div>
+            <div class="col-sm-4 error-message" hidden="" id="phone_number-error"></div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-4 my-auto labels"><label>Call Results</label></div>
+            <div class="col-sm-4 inputs" id="call_result-radio">
+                <input  type="radio" id="process_completed" name="call_result" value="Process Completed"/>
+                <label for="process_completed">Process Completed</label><br>
+                <input  type="radio" id="no_action" name="call_result" value="Customer chose no action"/>
+                <label for="no_action">Customer chose no action</label><br>
+                <input  type="radio" id="voicemail" name="call_result" value="Voicemail with NORT no contact SMS"/>
+                <label for="voicemail">Voicemail with NORT no contact SMS</label><br>
+                <input  type="radio" id="no_contact" name="call_result" value="Could not reach/leave message"/>
+                <label for="no_contact">Could not reach/leave message</label><br>
+            </div>        
+            <div class="col-sm-4 error-message" hidden="" id="call_result-error"></div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-4 my-auto labels"><label>Requested Action</label></div>
+            <div class="col-sm-4 inputs" id="requested_action-radio">
+                <input  type="radio" id="requested_cancel" name="requested_action" value="Cancel Lines"/>
+                <label for="requested_cancel">Cancel Line(s)</label><br>
+                <div id="cancelled_lines-input" hidden><label class="cancelled_line_labels">Lines:&nbsp;</label>
+                    <input type="text" id="cancelled_lines"/>
+                </div>
+                <input  type="radio" id="requested_cor" name="requested_action" value="COR Line(s)">
+                <label for="requested_cor">COR Line(s)</label><br>
+                <div id="cor_lines-input" hidden><label class="cor_line_labels">Lines:&nbsp;</label>
+                    <input type="text" id="cor_lines"/>
+                </div>
+                <input  type="radio" id="requested_portout" name="requested_action" value="Port Out">
+                <label for="requested_portout">Port Out</label><br>
+                <div id="portout-input" hidden><label for="portout_date">Date:&nbsp;</label>
+                    <input type="date" id="portout_date"/>
+                </div>
+                <input  type="radio" id="requested_final" name="requested_action" value="Final attempt, sent email to CR"/>
+                <label for="requested_final">Final attempt, sent email to CR</label><br>
+                <div id="backend_date-input" hidden><label for="backend_date">Date to Finish Backend:&nbsp;</label>
+                    <input type="date" id="backend_date"/>
+                </div>
+            </div>        
+            <div class="col-sm-4 error-message" hidden="" id="requested_action-error"></div>
+        </div>
+        
+        <div class="row">
+            <div class="col-sm-4 labels"><label>Deceased Verification</label></div>
+            <div class="col-sm-4 inputs my-auto" id="deceased_verification-radio">
+                <input  type="radio" id="accurint" name="deceased_verification" value="Accurint, LexID: "/>
+                <label for="accurint">Accurint</label><br>
+                <div id="lexid-input" class="my-auto" hidden><label for="lexid">LexID:&nbsp;</label>
+                    <textarea id="lexid"></textarea>
+                </div>
+                <input  type="radio" id="online" name="deceased_verification" value="Online, Website: "/>
+                <label for="online">Online</label><br>
+                <div id="website-input" hidden><label for="website">Website:&nbsp;</label>
+                    <input type="text" id="website"/>
+                </div>
+                <input  type="radio" id="unverified_sms" name="deceased_verification" value="Unverified, sent SMS. MSISDN: "/>
+                <label for="unverified_sms">Unverified, sent SMS</label><br>
+                <div id="msisdn-input" hidden><label for="msisdn">MSISDN:&nbsp;</label>
+                    <input type="text" id="msisdn">
+                </div>
+                <input  type="radio" id="unverified_no_contact" name="deceased_verification" value="Could not contact or verify"/>
+                <label for="unverified_no_contact">Could not contact or verify</label><br>
+            </div>        
+            <div class="col-sm-4 error-message" hidden="" id="deceased_verification-error"></div>
+        </div>
+    
+        <div class="row">
+            <div class="col-sm-4 labels"><label>Autopay Cancelled</label></div>
+            <div class="col-sm-4 my-auto inputs">
+                <input type="checkbox" id="autopay_cancelled" class="form-input"/>
+            </div>
+            <div class="col-sm-4 error-message" hidden="" id="autopay_cancelled-error"></div>
+        </div>
+        
+        <div class="row">
+            <div class="col-sm-4 labels"><label>Updated Billing Address</label></div>
+            <div class="col-sm-4 my-auto inputs">
+                <input type="checkbox" id="updated_billing_address" class="form-input"/>
+            </div>
+            <div class="col-sm-4 error-message" hidden="" id="updated_billing_address-error"></div>
+        </div>
+        
+        <div class="row">
+            <div class="col-sm-4 labels"><label>Updated Billing Parameters</label></div>
+            <div class="col-sm-4 my-auto inputs">
+                <input type="checkbox" id="updated_billing_parameters" class="form-input"/>
+            </div>
+            <div class="col-sm-4 error-message" hidden="" id="updated_billing_parameters-error"></div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-4 labels"><label>Special Instructions</label></div>
+            <div class="col-sm-4 inputs"><input type="checkbox" id="special_instruction" class="form-input"/></div>
+            <div class="col-sm-4 error-message" hidden="" id="special_instruction-error"></div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-4 my-auto labels"><label>EIP Status</label></div>
+            <div class="col-sm-4 inputs" id="eip_radio">
+                <input  type="radio" id="eip_transferred" name="eip_status" value="1"/>
+                <label for="eip_transferred">Transferred</label><br>
+                <div id="eip_transfer_email-input" hidden><label for="eip_transfer_email">Email:&nbsp;</label>
+                    <input type="text" id="eip_transfer_email"/>
+                </div>
+                <input  type="radio" id="eip_closed" name="eip_status" value="2"/>
+                <label for="eip_closed">Closed</label><br>
+                <input  type="radio" id="eip_na" name="eip_status" value="3"/>
+                <label for="eip_na">N/A</label><br>   
+            </div>
+            <div class="col-sm-4 error-message" hidden="" id="eip_status-error"></div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-4 my-auto labels"><label>DEIPCR Credit</label></div>
+            <div class="col-sm-4 inputs" id="deipcr_radio">
+                <input  type="radio" id="deipcr_applied" name="deipcr_credit" value="1"/>
+                <label for="deipcr_applied">Applied</label><br>
+                <div id="deipcr_applied_lines-input" hidden><label class="deipcr_applied_line_labels">Lines:&nbsp;</label>
+                    <input type="text" id="deipcr_applied_lines"/>
+                </div>
+                <div id="deipcr_applied-amount_input" hidden>
+                    <label for="deipcr_applied-amount">Total Amount:&nbsp;</label>
+                    <input type="text" id="deipcr_applied-amount"/>
+                </div>
+                <input  type="radio" id="deipcr_ineligible" name="deipcr_credit" value="2"/>
+                <label for="deipcr_ineligible">Ineligible</label><br>
+                <div id="deipcr_ineligible_lines-input" hidden><label class="deipcr_ineligible_line_labels">Lines:&nbsp;</label>
+                    <input type="text" id="deipcr_ineligible_lines"/>
+                </div>
+                <div id="deipcr_ineligible-reason_input" hidden>
+                    <label for="deipcr_ineligible-reason">Reason:&nbsp;</label>
+                    <input type="text" id="deipcr_ineligible-reason"/>
+                </div>
+                <input  type="radio" id="deipcr_na" name="deipcr_credit" value="3"/>
+                <label for="deipcr_na">N/A</label><br>   
+            </div>
+            <div class="col-sm-4 error-message" hidden="" id="deipcr_credit-error"></div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-4 my-auto labels"><label>JOD Return Status</label></div>
+            <div class="col-sm-4 inputs" id="jod-radio">
+                <input  type="radio" id="jod_return_complete" name="jod_status" value="1"/>
+                <label for="jod_return_complete">Completed</label><br>
+                <div id="jod_ordernumber-input" hidden><label for="jod_ordernumber">Order Number:&nbsp;</label>
+                    <input type="text" id="jod_ordernumber"/>
+                </div>
+                <input  type="radio" id="jod_na" name="jod_status" value="3"/>
+                <label for="jod_na">N/A</label><br>   
+            </div>
+            <div class="col-sm-4 error-message" hidden="" id="jod_status-error"></div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-4 my-auto labels"><label>HSI Return Status</label></div>
+            <div class="col-sm-4 inputs" id="hsi-radio">
+                <input  type="radio" id="hsi_return_processed" name="hsi_status" value="1"/>
+                <label for="hsi_return_processed">Processed</label><br>
+                <div id="hsi_ordernumber-input" hidden><label for="hsi_ordernumber">Order Number:&nbsp;</label>
+                    <input type="text" id="hsi_ordernumber"/>
+                </div>
+                <input  type="radio" id="hsi_return_unprocessed" name="hsi_status" value="2"/>
+                <label for="hsi_return_unprocessed">Unprocessed</label><br>
+                <div id="hsi_reason-input" hidden><label for="hsi_reason">Reason:&nbsp;</label>
+                    <input type="text" id="hsi_reason"/>
+                </div>
+                <input  type="radio" id="hsi_na" name="hsi_status" value="3"/>
+                <label for="hsi_na">N/A</label><br>   
+            </div>
+            <div class="col-sm-4 error-message" hidden="" id="hsi_status-error"></div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-4 my-auto labels"><label>BAN Cancelled as FACD</label></div>
+            <div class="col-sm-4 inputs">
+                <input  type="radio" id="ban_cancelled" name="ban_as_facd" value="1"/>
+                <label for="ban_cancelled">Cancelled</label><br>
+                <input  type="radio" id="ban_followup" name="ban_as_facd" value="2"/>
+                <label for="ban_followup">Follow up, CR response email sent</label><br>
+                <input  type="radio" id="ban_na" name="ban_as_facd" value="3"/>
+                <label for="ban_na">N/A</label><br>   
+            </div>
+            <div class="col-sm-4 error-message" hidden="" id="ban_as_facd-error"></div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-4 my-auto labels"><label>Updated Sharepoint</label></div>
+            <div class="col-sm-4 inputs">
+                <input  type="radio" id="sharepoint_updated" name="sharepoint" value="1"/>
+                <label for="sharepoint_updated">Yes</label><br>
+                <input  type="radio" id="sharepoint_followup" name="sharepoint" value="2"/>
+                <label for="sharepoint_followup">Follow up, CR response email sent</label><br> 
+            </div>
+            <div class="col-sm-4 error-message" hidden="" id="sharepoint-error"></div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-4 labels"><label>Followed COR Policy</label></div>
+            <div class="col-sm-4 my-auto inputs">
+                <input type="checkbox" id="cor_policy" name="cor_policy" class="form-input"/>
+            </div>
+            <div class="col-sm-4 error-message" hidden="" id="cor_policy-error"></div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-4 labels"><label>Overall Status</label></div>
+            <div class="col-sm-4 inputs"><select  id="overall_status" name="overall_status" class="form-input">
+                    <option></option>
+                    <option value="1">Completed</option>
+                    <option value="2">In Progress (scheduled callback)</option>
+                    <option value="3">In Progress (waiting for backend processing)</option>
+                </select>
+            </div>
+            <div class="col-sm-4 error-message" hidden="" id="overall_status-error"></div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-4 labels"><label>Additional Memos</label></div>
+            <div class="col-sm-4 inputs"><textarea id="additional_memo" name="additional_memo" class="form-input"></textarea></div>
+            <div class="col-sm-4 error-message" hidden="" id="additional_memo-error"></div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-4"></div>
+            <div class="col-sm-4 text-center"><button type="submit">Generate Memo</button></div>
+            <div class="col-sm-4"></div>
+        </div>
+
+    </form>
+
+    <div class="container-fluid" id="display-container"></div>
+
+
+    <script>
+        const form = document.getElementById('memo-form');
+
+            const call_direction = form.call_direction;
+            const contact_attempt = form.contact_attempt;
+            const survivor_name = form.survivor_name;
+            const phone_number = form.phone_number;
+            const call_result = form.call_result;
+            const requested_action = form.requested_action;
+            const deceased_verification = form.deceased_verification;
+            const autopay_cancelled = form.autopay_cancelled;
+            const updated_billing_address = form.updated_billing_address;
+            const updated_billing_parameters = form.updated_billing_parameters;
+            const special_instruction = form.special_instruction;
+            const eip_status = form.eip_status;
+            const deipcr_credit = form.deipcr_credit;
+            const jod_status = form.jod_status;
+            const hsi_status = form.hsi_status;
+            const ban_as_facd = form.ban_as_facd;
+            const sharepoint = form.sharepoint;
+            const cor_policy = form.cor_policy;
+            const overall_status = form.overall_status;
+            const additional_memo = form.additional_memo;
+
+        const requested_action_radio = document.getElementById('requested_action-radio');
+        const deceased_verification_radio = document.getElementById('deceased_verification-radio');
+        const jod_radio = document.getElementById('jod-radio');
+        const hsi_radio = document.getElementById('hsi-radio');
+        const cancelled_lines_input = document.getElementById('cancelled_lines-input');
+        const cor_lines_input = document.getElementById('cor_lines-input');
+        const eip_radio = document.getElementById('eip_radio');
+        const eip_transfer = document.getElementById('eip_transferred');
+        const deipcr_applied_lines_input = document.getElementById('deipcr_applied_lines-input');
+        const deipcr_applied_lines = document.getElementById('deipcr_applied_line-amount');
+        const deipcr_ineligible_reason_div = document.getElementById('deipcr_ineligible-reason_input');
+        const deipcr_ineligible_lines_input = document.getElementById('deipcr_ineligible_lines-input');
+        const deipcr_radio = document.getElementById('deipcr_radio');
+
+
+
+        requested_action_radio.addEventListener('click', (event)=>{
+            if(document.getElementById('requested_cancel').checked){
+                cor_lines_input.hidden = true;
+                document.getElementById('portout-input').hidden = true;
+                document.getElementById('backend_date-input').hidden = true;
+                cancelled_lines_input.hidden = false;
+            }else if(document.getElementById('requested_cor').checked){
+                document.getElementById('portout-input').hidden = true;
+                document.getElementById('backend_date-input').hidden = true;
+                cancelled_lines_input.hidden = true;
+                cor_lines_input.hidden = false;
+            }else if(document.getElementById('requested_portout').checked){
+                cor_lines_input.hidden = true;
+                document.getElementById('backend_date-input').hidden = true;
+                cancelled_lines_input.hidden = true;
+                document.getElementById('portout-input').hidden = false;
+            }else if(document.getElementById('requested_final').checked){
+                cor_lines_input.hidden = true;
+                document.getElementById('portout-input').hidden = true;
+                cancelled_lines_input.hidden = true;
+                document.getElementById('backend_date-input').hidden = false;
+            }
+            
+        });
+        
+        deceased_verification_radio.addEventListener('click', (event)=>{
+            if(document.getElementById('accurint').checked){
+                document.getElementById('website-input').hidden = true;
+                document.getElementById('msisdn-input').hidden = true;
+                document.getElementById('lexid-input').hidden = false;
+            }else if(document.getElementById('online').checked){
+                document.getElementById('lexid-input').hidden = true;
+                document.getElementById('msisdn-input').hidden = true;
+                document.getElementById('website-input').hidden = false;
+            }else if(document.getElementById('unverified_sms').checked){
+                document.getElementById('lexid-input').hidden = true;
+                document.getElementById('website-input').hidden = true;
+                document.getElementById('msisdn-input').hidden = false;
+            }else if(document.getElementById('unverified_no_contact').checked){
+                document.getElementById('lexid-input').hidden = true;
+                document.getElementById('website-input').hidden = true;
+                document.getElementById('msisdn-input').hidden = true;
+            }
+        });
+
+        eip_radio.addEventListener('click', (event)=>{
+            if(eip_transfer.checked){
+                document.getElementById('eip_transfer_email-input').hidden = false;
+            }else{
+                document.getElementById('eip_transfer_email-input').hidden = true;
+            }
+        });
+
+        deipcr_radio.addEventListener('click', (event)=>{
+            if(document.getElementById('deipcr_applied').checked){
+                document.getElementById('deipcr_ineligible-reason_input').hidden = true;
+                document.getElementById('deipcr_ineligible_lines-input').hidden = true;
+                document.getElementById('deipcr_applied_lines-input').hidden = false;
+                document.getElementById('deipcr_applied-amount_input').hidden = false;
+            }else if(document.getElementById('deipcr_ineligible').checked){
+                document.getElementById('deipcr_applied_lines-input').hidden = true;
+                document.getElementById('deipcr_applied-amount_input').hidden = true;
+                document.getElementById('deipcr_ineligible_lines-input').hidden = false;
+                document.getElementById('deipcr_ineligible-reason_input').hidden = false;
+            }else{
+                document.getElementById('deipcr_applied_lines-input').hidden = true;
+                document.getElementById('deipcr_applied-amount_input').hidden = true;
+                document.getElementById('deipcr_ineligible_lines-input').hidden = true;
+                document.getElementById('deipcr_ineligible-reason_input').hidden = true;
+            }
+        });
+
+
+       
+        jod_radio.addEventListener('click', (event)=>{
+            if(document.getElementById('jod_return_complete').checked){
+                document.getElementById('jod_ordernumber-input').hidden = false;
+            }else if(document.getElementById('jod_na').checked){
+                document.getElementById('jod_ordernumber').hidden = true;
+            }
+        });
+        hsi_radio.addEventListener('click', (event)=>{
+            if(document.getElementById('hsi_return_processed').checked){
+                document.getElementById('hsi_ordernumber-input').hidden = false;
+                document.getElementById('hsi_reason-input').hidden = true;
+            }else if(document.getElementById('hsi_return_unprocessed').checked){
+                document.getElementById('hsi_ordernumber-input').hidden = true;
+                document.getElementById('hsi_reason-input').hidden = false;
+            }else if(document.getElementById('hsi_na').checked){
+                document.getElementById('hsi_ordernumber-input').hidden = true;
+                document.getElementById('hsi_reason-input').hidden = true;
+            }
+        });
+
+        function setNewRow(display, displayRow, displayText){
+            displayRow.appendChild(displayText.cloneNode(true));
+            //display.appendChild(displayRow.cloneNode(true));
+            //displayRow.innerHTML = '';
+        }
+
+        function generateMemo() {
+            const display = document.getElementById('display-container');
+            display.innerHTML = '&nbsp;';
+            const displayRow = document.createElement('div');
+                displayRow.setAttribute('class', 'row'); 
+            const displayText = document.createElement('p');
+                displayText.setAttribute('class', 'col-sm-12');
+            
+
+            //Call Direction
+            if(call_direction.value.length > 0){
+                document.getElementById('call_direction-error').hidden = true;
+                if(call_direction.value === 'Inbound'){
+                    displayText.innerHTML += 'DECEASE BRP Request: Inbound<br>';
+                }else if(call_direction.value === 'Outbound'){
+                    displayText.innerHTML += 'DECEASE BRP Request: Outbound<br>';
+                }
+                //setNewRow(display, displayRow, displayText);
+            }else if(call_direction.value.length === 0){
+                document.getElementById('call_direction-error').hidden = false;
+                document.getElementById('call_direction-error').innerText = 'Please select direction of the call.';
+                display.innerHTML = '&nbsp;';
+            } 
+
+            //Contact Attempt
+            if(contact_attempt.value.length > 0){
+                document.getElementById('contact_attempt-error').hidden = true;
+                displayText.innerHTML += 'Attempt: '+contact_attempt.value+'<br>';
+               // setNewRow(display, displayRow, displayText);
+            }
+            else if(contact_attempt.value.length === 0){
+                document.getElementById('contact_attempt-error').hidden = false;
+                document.getElementById('contact_attempt-error').innerText = 'Please select the current contact attempt.';
+                display.innerHTML = '&nbsp;';
+            } 
+
+            //Survivor Name
+            if(survivor_name.value.length > 0){
+                document.getElementById('survivor_name-error').hidden = true;
+                displayText.innerHTML += 'Survivor Name: '+survivor_name.value+'<br>';
+                //setNewRow(display, displayRow, displayText);
+            }
+            else if(survivor_name.value.length === 0){
+                document.getElementById('survivor_name-error').hidden = false;
+                document.getElementById('survivor_name-error').innerText = "Please input the survivor's name.";
+                display.innerHTML = '&nbsp;';
+            } 
+            
+            //Phone Number Called
+            if(phone_number.value.length > 0){
+                document.getElementById('phone_number-error').hidden = true;
+                displayText.innerHTML += 'Number Called: '+phone_number.value+'<br>';
+                //setNewRow(display, displayRow, displayText);
+            }else if(phone_number.value.length === 0){
+                document.getElementById('phone_number-error').hidden = false;
+                document.getElementById('phone_number-error').innerText = "Please input the phone number that was contacted.";
+                display.innerHTML = '&nbsp;';
+            } 
+            
+            //Call Results
+            if(call_result.value.length > 0){
+                document.getElementById('call_result-error').hidden = true;
+                if(document.getElementById('process_completed').checked){
+                    displayText.innerHTML += 'Results of Call: Process Completed<br>';
+                }else if(document.getElementById('no_action').checked){
+                    displayText.innerHTML += 'Results of Call: Customer chose no action<br>';
+                }else if(document.getElementById('voicemail').checked){
+                    displayText.innerHTML += 'Results of Call: Voicemail with NORT no contact SMS<br>';
+                }else if(document.getElementById('no_contact').checked){
+                    displayText.innerHTML += 'Results of Call: Could not reach/leave message<br>';
+                }
+                //setNewRow(display, displayRow, displayText);
+
+            }else if(call_result.value.length === 0){
+                document.getElementById('call_result-error').hidden = false;
+                document.getElementById('call_result-error').innerText = "Please select the call result.";
+                display.innerHTML = '&nbsp;';
+            } 
+            //Deceased Verification
+            if(deceased_verification.value.length > 0){
+                document.getElementById('deceased_verification-error').hidden = true;
+                if(document.getElementById('accurint').checked){
+                    const lexLinesSeparated = document.getElementById('lexid').value.split('\n');
+                    displayText.innerHTML += 'Documentation Verified with Accurint - LexID: <br>'+lexLinesSeparated.join('<br>')+'<br>';
+                }else if(document.getElementById('online').checked){
+                    displayText.innerHTML += 'Documentation Verified Online - Website: '+document.getElementById('website').value+'<br>';            
+                }else if(document.getElementById('voicemail').checked){
+                    displayText.innerHTML += 'Documentation Not Verified - MSISDN: '+document.getElementById('msisdn').value+'<br>';
+                }else if(document.getElementById('no_contact').checked){
+                    displayText.innerHTML += 'Documentation Not Verified - Could not contact or verify<br>';
+                }
+                //setNewRow(display, displayRow, displayText);
+
+            }else if(deceased_verification.value.length === 0){
+                document.getElementById('deceased_verification-error').hidden = false;
+                document.getElementById('deceased_verification-error').innerText = "Please select verification method.";
+                display.innerHTML = '&nbsp;';
+            } 
+
+
+            //Requested Action 
+            if(requested_action.value.length > 0){
+                document.getElementById('requested_action-error').hidden = true;
+                if(document.getElementById('requested_cancel').checked){
+                    displayText.innerHTML += 'Requested Action - Cancel Lines: '+document.getElementById('cancelled_lines').value+'<br>';
+                }else if(document.getElementById('requested_cor').checked){
+                    displayText.innerHTML += 'Requested Action - COR Lines: '+document.getElementById('cor_lines').value+'<br>';
+                }else if(document.getElementById('requested_portout').checked){
+                    displayText.innerHTML += 'Requested Action - Port Out Date: '+document.getElementById('portout_date').value+'<br>';
+                }else if(document.getElementById('requested_final').checked){
+                    displayText.innerHTML += 'Requested Action - Final attempt, email sent to CR. Set follow up Date: '+document.getElementById('backend_date').value+'<br>';
+                }
+                //setNewRow(display, displayRow, displayText);
+
+            }else if(requested_action.value.length === 0){
+                document.getElementById('requested_action-error').hidden = false;
+                document.getElementById('requested_action-error').innerText = "Please select the requested action.";
+                display.innerHTML = '&nbsp;';
+            }
+
+            //Autopay Cancelled
+            if(autopay_cancelled.checked){
+                displayText.innerHTML += 'Autopay Cancelled<br>';
+                //setNewRow(display, displayRow, displayText);
+            }
+            
+            //Updated Billing Address
+            if(updated_billing_address.checked){
+                displayText.innerHTML += 'Alternate Billing Address Updated<br>';
+                //setNewRow(display, displayRow, displayText);
+            }
+            
+            //Updated Billing Parameters
+            if(updated_billing_parameters.checked){
+                displayText.innerHTML += 'Billing Parameters Changed<br>';
+                //setNewRow(display, displayRow, displayText);
+            }
+            
+            //Special Instructions
+            if(special_instruction.checked){
+                displayText.innerHTML += 'Special Instructions Added<br>';
+                //setNewRow(display, displayRow, displayText);
+            }
+
+            //EIP Status 
+            if(eip_status.value.length > 0){
+                document.getElementById('eip_status-error').hidden = true;
+                if(document.getElementById('eip_transferred').checked){
+                    displayText.innerHTML += 'EIP Transferred - Email: '+document.getElementById('eip_transfer_email').value+'<br>';
+                }else if(document.getElementById('eip_closed').checked){
+                    displayText.innerHTML += 'EIP Closed<br>';
+                }else if(document.getElementById('eip_na').checked){
+                    displayText.innerHTML += 'EIP N/A<br>';
+                }
+                //setNewRow(display, displayRow, displayText);
+
+            }else if(eip_status.value.length === 0){
+                document.getElementById('eip_status-error').hidden = false;
+                document.getElementById('eip_status-error').innerText = "Please select the EIP status.";
+                display.innerHTML = '&nbsp;';
+            } 
+            
+            //DEIPCR Credit 
+            if(deipcr_credit.value.length > 0){
+                document.getElementById('deipcr_credit-error').hidden = true;
+                if(document.getElementById('deipcr_applied').checked){
+                    displayText.innerHTML += 'DEIPCR Applied - Lines: '+document.getElementById('deipcr_applied_lines').value+
+                        ' Amount: '+document.getElementById('deipcr_applied-amount').value+'<br>';
+                }else if(document.getElementById('deipcr_ineligible').checked){
+                    displayText.innerHTML += 'DEIPCR Ineligible - Lines: '+document.getElementById('deipcr_ineligible_lines').value+
+                        ' Reason: '+document.getElementById('deipcr_ineligible-reason').value+'<br>';
+                }else if(document.getElementById('deipcr_na').checked){
+                    displayText.innerHTML += 'DEIPCR N/A<br>';
+                } 
+                //setNewRow(display, displayRow, displayText);
+
+            }else if(deipcr_credit.value.length === 0){
+                document.getElementById('deipcr_credit-error').hidden = false;
+                document.getElementById('deipcr_credit-error').innerText = "Please input whether DEIPCR credit was applied.";
+                display.innerHTML = '&nbsp;';
+            } 
+            
+            //JOD Return Status 
+            if(jod_status.value.length > 0){
+                document.getElementById('jod_status-error').hidden = true;
+                if(document.getElementById('jod_return_complete').checked){
+                    displayText.innerHTML += 'JOD Return Complete - Order Number: '+document.getElementById('jod_ordernumber').value+'<br>';
+                }else if(document.getElementById('jod_na').checked){
+                    displayText.innerHTML += 'JOD Return N/A<br>';
+                }
+                //setNewRow(display, displayRow, displayText);
+
+            }else if(jod_status.value.length === 0){
+                document.getElementById('jod_status-error').hidden = false;
+                document.getElementById('jod_status-error').innerText = "Please select the JOD status.";
+                display.innerHTML = '&nbsp;';
+            } 
+
+            //HSI Return Status 
+            if(hsi_status.value.length > 0){
+                document.getElementById('hsi_status-error').hidden = true;
+                if(document.getElementById('hsi_return_processed').checked){
+                    displayText.innerHTML += 'HSI Return Processed - Order Number: '+document.getElementById('hsi_ordernumber').value+'<br>';
+                }else if(document.getElementById('hsi_return_unprocessed').checked){
+                    displayText.innerHTML += 'HSI Return Not Processed - Reason: '+document.getElementById('hsi_reason').value+'<br>';
+                }else if(document.getElementById('hsi_na').checked){
+                    displayText.innerHTML += 'HSI Return N/A<br>';
+                } 
+                //setNewRow(display, displayRow, displayText);
+
+            }else if(hsi_status.value.length === 0){
+                document.getElementById('hsi_status-error').hidden = false;
+                document.getElementById('hsi_status-error').innerText = "Please select the HSI return status.";
+                display.innerHTML = '&nbsp;';
+            }
+            
+            //BAN Cancelled as FACD 
+            if(ban_as_facd.value.length > 0){
+                document.getElementById('ban_as_facd-error').hidden = true;
+                if(document.getElementById('ban_cancelled').checked){
+                    displayText.innerHTML += 'BAN cancelled as FACD<br>';
+                }else if(document.getElementById('ban_followup').checked){
+                    displayText.innerHTML += 'BAN follow up, CR email sent<br>';
+                }else if(document.getElementById('ban_na').checked){
+                    displayText.innerHTML += 'BAN N/A<br>';
+                }
+                //setNewRow(display, displayRow, displayText);
+
+            }else if(ban_as_facd.value.length === 0){
+                document.getElementById('ban_as_facd-error').hidden = false;
+                document.getElementById('ban_as_facd-error').innerText = "Please select a field.";
+                display.innerHTML = '&nbsp;';
+            }
+
+            //Updated Sharepoint 
+            if(sharepoint.value.length > 0){
+                document.getElementById('sharepoint-error').hidden = true;
+                if(parseInt(sharepoint.value) === 1){
+                    displayText.innerHTML += 'Updated Sharepoint<br>';
+                }else if(parseInt(sharepoint.value) === 2){
+                    displayText.innerHTML += 'Sharepoint follow up, CR email sent<br>'; 
+                }
+                //setNewRow(display, displayRow, displayText); 
+
+            }else if(parseInt(sharepoint.value) <= 0){
+                document.getElementById('sharepoint-error').hidden = false;
+                document.getElementById('sharepoint-error').innerText = "Please select a field.";
+                display.innerHTML = '&nbsp;';
+            }
+
+            //Followed COR Policy
+            if(cor_policy.checked){
+                displayText.innerHTML += 'COR policy followed<br>'
+                //setNewRow(display, displayRow, displayText);
+            }
+            
+            //Overall Status
+            if(overall_status.value.length > 0){
+                document.getElementById('overall_status-error').hidden = true;
+                if(parseInt(overall_status.value) === 1){
+                    displayText.innerHTML += 'Overall Status: Complete<br>';
+
+                }else if(parseInt(overall_status.value) === 2){
+                    displayText.innerHTML += 'Overall Status: In Progress - Callback Scheduled<br>';
+
+                }else if(parseInt(overall_status.value) === 3){
+                    displayText.innerHTML += 'Overall Status: In Progress - Backend Processing<br>';
+                }
+                //setNewRow(display, displayRow, displayText);
+
+            }else if(parseInt(overall_status.value) <= 0){
+                document.getElementById('overall_status-error').hidden = false;
+                document.getElementById('overall_status-error').innerText = "Please select the status.";
+                display.innerHTML = '&nbsp;';
+            }
+            
+            //Additional Memos
+            if(document.getElementById('additional_memo').value.length > 0){
+                const linesSeparated = document.getElementById('additional_memo').value.split('\n');
+                displayText.innerHTML += 'Additional Memos: '+linesSeparated.join(', ');
+                //setNewRow(display, displayRow, displayText);
+            }
+
+            setNewRow(display, displayRow, displayText);
+            display.appendChild(displayRow);
+
+        }
+
+    </script>
+</body>
+
+</html>
