@@ -73,6 +73,14 @@
                 <div id="cor_lines-input" hidden><label class="cor_line_labels">Lines:&nbsp;</label>
                     <input type="text" id="cor_lines"/>
                 </div>
+                <input  type="radio" id="requested_both" name="requested_action" value="Both">
+                <label for="requested_both">COR & Cancel Line(s)</label><br>
+                <div id="both_lines-input" hidden>
+                    <label for="both_cor_lines">COR Lines:&nbsp;</label>
+                    <input type="text" id="both_cor_lines"/>
+                    <label for="both_cancelled_lines">Cancelled Lines:&nbsp;</label>
+                    <input type="text" id="both_cancelled_lines"/>
+                </div>
                 <input  type="radio" id="requested_portout" name="requested_action" value="Port Out">
                 <label for="requested_portout">Port Out</label><br>
                 <div id="portout-input" hidden><label for="portout_date">Date:&nbsp;</label>
@@ -323,21 +331,32 @@
                 cor_lines_input.hidden = true;
                 document.getElementById('portout-input').hidden = true;
                 document.getElementById('backend_date-input').hidden = true;
+                document.getElementById('both_lines-input').hidden = true;
                 cancelled_lines_input.hidden = false;
             }else if(document.getElementById('requested_cor').checked){
                 document.getElementById('portout-input').hidden = true;
                 document.getElementById('backend_date-input').hidden = true;
                 cancelled_lines_input.hidden = true;
+                document.getElementById('both_lines-input').hidden = true;
                 cor_lines_input.hidden = false;
+            }
+            if(document.getElementById('requested_both').checked){
+                document.getElementById('portout-input').hidden = true;
+                document.getElementById('backend_date-input').hidden = true;
+                cancelled_lines_input.hidden = true;
+                cor_lines_input.hidden = true;
+                document.getElementById('both_lines-input').hidden = false;
             }else if(document.getElementById('requested_portout').checked){
                 cor_lines_input.hidden = true;
                 document.getElementById('backend_date-input').hidden = true;
                 cancelled_lines_input.hidden = true;
+                document.getElementById('both_lines-input').hidden = true;
                 document.getElementById('portout-input').hidden = false;
             }else if(document.getElementById('requested_final').checked){
                 cor_lines_input.hidden = true;
                 document.getElementById('portout-input').hidden = true;
                 cancelled_lines_input.hidden = true;
+                document.getElementById('both_lines-input').hidden = true;
                 document.getElementById('backend_date-input').hidden = false;
             }
             
@@ -519,12 +538,14 @@
 
 
             //Requested Action 
-            if(requested_action.value.length > 0){
+            if(requested_action.value.length > 0 || form.requested_cancel.checked){
                 document.getElementById('requested_action-error').hidden = true;
                 if(document.getElementById('requested_cancel').checked){
-                    displayText.innerHTML += 'Requested Action - Cancel Lines: '+document.getElementById('cancelled_lines').value+'<br>';
+                    displayText.innerHTML += 'Requested Action - Cancelled Lines: '+document.getElementById('cancelled_lines').value+'<br>';
                 }else if(document.getElementById('requested_cor').checked){
                     displayText.innerHTML += 'Requested Action - COR Lines: '+document.getElementById('cor_lines').value+'<br>';
+                }else if(document.getElementById('requested_both').checked){
+                    displayText.innerHTML += 'Requested Action - COR Lines: '+document.getElementById('both_cor_lines').value+' Cancelled Lines: '+document.getElementById('both_cancelled_lines').value+'<br>';
                 }else if(document.getElementById('requested_portout').checked){
                     displayText.innerHTML += 'Requested Action - Port Out Date: '+document.getElementById('portout_date').value+'<br>';
                 }else if(document.getElementById('requested_final').checked){
