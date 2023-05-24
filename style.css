@@ -77,11 +77,9 @@ body{
     color: #ffffff;
     padding: 3% 5%;
 }
-label{
-    font-size: 1.1em;
-}
-.labels>label, button{
-    font-size: 24px;
+
+.labels>label, button, input[type=reset]{
+    font-size: 1.3em;
     font-weight: bold;
 }
 #memo-form{
@@ -91,18 +89,19 @@ label{
 }
 input[type=text],
 input[type=tel],
-textarea,
 select{
+    background-color: #cdcdcd;
     border-radius: 5px;
     width: 100%;
 }
-button{
+
+input[type=reset], button{
     background-color: #cdcdcd;
     color: #1b1b1b;
     padding: 5% 12.5%;
     border: #1b1b1b 5px solid;
     border-radius: 50px;
-}button:hover{
+}input[type=reset]:hover, button:hover{
     background-color: #1b1b1b;
     color: #fff;
     padding: 5% 12.5%;
@@ -110,9 +109,43 @@ button{
     border-radius: 50px;
     scale: .9;
 }
-#lexid, #website, #msisdn{
+#lexid, #website, #msisdn, #executive{
     width: auto;
 }
-p{
-    line-height: 2rem;
+
+#special_instructions{
+    width: 90%;
 }
+
+pre{
+    line-height: 2rem;
+    font-size: 1em;
+}
+#font_size-input{
+    position: fixed;
+    top: 25%;
+    left: 2%;
+    font-size: .75em;
+}#font_size{
+    appearance: slider-vertical;
+    width: 1em;
+}
+@media only screen and (max-width: 768px) {
+    #font_size-input>label{
+        display: none;
+    }
+    #font_size-input{
+        position: fixed;
+        top: 2%;
+        left: 50%;
+        transform: translate(-50%);
+        font-size: .75em;
+    }#font_size{
+        appearance: slider-horizontal;
+        width:fit-content;
+    }
+}
+input, textarea{
+    background-color: #cdcdcd;
+}
+
