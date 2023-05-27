@@ -15,14 +15,14 @@
         <script>
             function scaleFont(){
                 const scaler = document.getElementById('font_size').value;
-                document.body.style.fontSize = scaler+'em';
+                document.body.style.fontSize = scaler*100+'%';
             }
         </script>
     </div>
     <form id="memo-form">
         <div class="row">
-            <div class="col-md-4 my-auto labels"><label>Call Direction</label></div>
-            <div class="col-md-4 inputs" id="call_direction-input">
+            <div class="col-md-3 my-auto labels"><label>Call Direction</label></div>
+            <div class="col-md-5 inputs" id="call_direction-input">
                 <input  type="radio" id="inbound" name="call_direction" value="Inbound"/>
                 <label for="inbound">Inbound</label><br>
                 <input  type="radio" id="outbound" name="call_direction" value="Outbound"/>
@@ -31,9 +31,9 @@
             <div class="col-md-4 error-message" hidden="" id="call_direction-error"></div>
         </div>
         
-        <div class="row" id="contact_attempt-input" hidden>
-            <div class="col-md-4 my-auto labels"><label>Contact Attempt</label></div>
-            <div class="col-md-4 inputs"><select id="contact_attempt" name="contact_attempt" class="form-input">
+        <div class="row" id="contact_attempt-input">
+            <div class="col-md-3 my-auto labels"><label>Contact Attempt</label></div>
+            <div class="col-md-5 inputs"><select id="contact_attempt" name="contact_attempt" class="form-input">
                     <option></option>
                     <option value="First">First</option>
                     <option value="Second">Second</option>
@@ -44,256 +44,320 @@
         </div>
 
         <div class="row">
-            <div class="col-md-4 my-auto labels"><label>Survivor Name</label></div>
-            <div class="col-md-4 inputs"><input  type="text" id="survivor_name" name="survivor_name" class="form-input"/></div>
+            <div class="col-md-3 my-auto labels"><label>Survivor Name</label></div>
+            <div class="col-md-5 inputs"><input  type="text" id="survivor_name" name="survivor_name" class="form-input"/></div>
             <div class="col-md-4 error-message" hidden="" id="survivor_name-error"></div>
         </div>
 
         <div class="row">
-            <div class="col-md-4 my-auto labels"><label>Phone Number Called</label></div>
-            <div class="col-md-4 inputs"><input  type="tel" placeholder="+1 000-000-0000" id="phone_number" name="phone_number" class="form-input"/></div>
+            <div class="col-md-3 my-auto labels"><label>Phone Number Called</label></div>
+            <div class="col-md-5 inputs"><input  type="tel" placeholder="+1 000-000-0000" id="phone_number" name="phone_number" class="form-input"/></div>
             <div class="col-md-4 error-message" hidden="" id="phone_number-error"></div>
         </div>
 
         <div class="row">
             <div class="col-md-3 my-auto labels"><label>Call Results</label></div>
             <div class="col-md-3 my-auto inputs" id="call_result-radio">
-                <input  type="radio" id="process_completed" name="call_result" value="Process Completed"/>
+                <input  type="radio" id="process_completed" name="call_result" value='0'/>
                 <label for="process_completed">Process Completed</label><br>
-                <input  type="radio" id="no_action" name="call_result" value="Customer chose no action"/>
+                <input  type="radio" id="no_action" name="call_result" value='1'/>
                 <label for="no_action">Customer chose no action</label><br>
-                <input  type="radio" id="voicemail" name="call_result" value="Voicemail with NORT no contact SMS"/>
-                <label for="voicemail">Voicemail with NORT no contact SMS</label><br>
-                <input  type="radio" id="no_contact" name="call_result" value="Could not reach/leave message"/>
-                <label for="no_contact">Could not reach/leave message</label><br>
-            </div>
-            <div class="col-md-3">
-                
-                <div id="executive_action-input" class="my-auto" hidden><label for="executive">Approved by:&nbsp;</label><br>
-                    <input type="text" id="executive"/><br>
-                    <label for="executive_action-memo">Details:&nbsp;</label><br>
-                    <textarea id="executive_action-memo"></textarea>
+                <input  type="radio" id="voicemail" name="call_result" value='2'/>
+                <label for="voicemail">Voicemail</label><br>
+                <div id="voicemail_dependent" hidden>
+                    <label for="sms">NORT no contact SMS Line:&nbsp;</label>
+                    <input type="tel" id="sms" name="sms"><br>
+                </div>
+                <input  type="radio" id="no_contact" name="call_result" value='3'/>
+                <label for="no_contact">Unable to reach or voicemail</label><br>
+
+                <input  type="radio" id="call_invalid" name="call_result" value='4'/>
+                <label for="call_invalid">Invalid</label><br>
+                <div id="invalid_dependent" hidden>
+                    <select id="invalid_memo" name="invalid_memo" class="form-input">
+                        <option></option>
+                        <option value="0">Spanish/Puerto Rico</option>
+                        <option value="1">No/Incomplete Contact Info</option>
+                        <option value="2">TFB</option>
+                        <option value="3">POA, End User Deceased, BRP alive</option>
+                        <option value="4">BRP passed after W/O</option>
+                    </select><br>
+                </div>
+                <input  type="radio" id="already_resolved" name="call_result" value='5'/>
+                <label for="already_resolved">Already Resolved</label><br>
+                <div id="resolved_dependent" hidden>
+                    <label for="resolved_date">Resolved Date:&nbsp;</label>
+                    <input type="date" id="resolved_date" name="resolved_date"><br>
+                </div>
+                <input  type="radio" id="escalated" name="call_result" value='6'/>
+                <label for="escalated">Escalated, No Dial</label><br>
+                <div id="callback_date-input" hidden>
+                    <label for="callback_date">Callback:&nbsp;</label><br>
+                    <input  type="date" id="callback_date" name="callback_date"/>
                 </div>
 
+                
+
+            </div>
+            <div class="col-md-3" id="call_secondary">
+                
+                <div id="vm_script" hidden><h4>Script:&nbsp;</h4>
+                    <p id="vm_script-text">Hello, this is [rep name], calling from T-Mobile. We have been unable to reach you on your request for account changes. We’re sorry to have missed you and respect your valuable time, especially during this difficult period. To prevent cancelation of service and loss of voicemails. Please return our call by dialing 800-298-9746 from the same device you received our message within 7 days. We are here Monday - Friday, 6 a.m. –4 p.m. PT and Saturday 8 a.m. - 4 p.m. PT.</p>
+                </div>
+                <div id="executive_action-input" class="my-auto" hidden><label for="executive">Approved by:&nbsp;</label><br>
+                    <input type="text" id="executive"/><br>
+                    <label for="executive_action_memo">Details:&nbsp;</label><br>
+                    <textarea id="executive_action_memo"></textarea>
+                </div>
                 <label for="executive_action">Executive Action&nbsp;</label><input type="checkbox" id="executive_action" name="executive_action" class="form-input"/><br>
                 
             </div>    
             <div class="col-md-3 error-message" hidden="" id="call_result-error"></div>
         </div>
-
-        <div class="row">
-            <div class="col-md-4 my-auto labels"><label>Deceased Verification</label></div>
-            <div class="col-md-4 inputs my-auto" id="deceased_verification-radio">
-                <input  type="radio" id="accurint" name="deceased_verification" value="Accurint, LexID: "/>
-                <label for="accurint">Accurint</label><br>
-                <div id="lexid-input" class="my-auto" hidden><label for="lexid">LexID:&nbsp;</label><br>
-                    <textarea id="lexid"></textarea>
-                </div>
-                <input  type="radio" id="online" name="deceased_verification" value="Online, Website: "/>
-                <label for="online">Online</label><br>
-                <div id="website-input" hidden><label for="website">Website:&nbsp;</label>
-                    <input type="text" id="website"/>
-                </div>
-                <input  type="radio" id="unverified_sms" name="deceased_verification" value="Unverified, sent SMS. MSISDN: "/>
-                <label for="unverified_sms">Unverified, sent SMS</label><br>
-                <div id="msisdn-input" hidden><label for="msisdn">MSISDN:&nbsp;</label>
-                    <input type="text" id="msisdn">
-                </div>
-                <input  type="radio" id="verified_physical" name="deceased_verification" value="Physical Documentation. File: "/>
-                <label for="verified_physical">Physical</label><br>
-                <div id="deceased_file-input" hidden><!--label for="deceased_file">File:&nbsp;</label-->
-                    <input type="file" id="deceased_file">
-                </div>
-                <input  type="radio" id="unverified_no_contact" name="deceased_verification" value="Could not contact or verify"/>
-                <label for="unverified_no_contact">Could not contact or verify</label><br>
-            </div>        
-            <div class="col-md-4 error-message" hidden="" id="deceased_verification-error"></div>
-        </div>
-
-        <div class="row">
-            <div class="col-md-4 my-auto labels"><label>Requested Action</label></div>
-            <div class="col-md-4 inputs" id="requested_action-radio">
-                <input  type="radio" id="requested_cancel" name="requested_action" value="Cancel Lines"/>
-                <label for="requested_cancel">Cancel Line(s)</label><br>
-                <div id="cancelled_lines-input" hidden><label class="cancelled_line_labels">Lines:&nbsp;</label>
-                    <input type="text" id="cancelled_lines"/>
-                </div>
-                <input  type="radio" id="requested_cor" name="requested_action" value="COR Line(s)">
-                <label for="requested_cor">COR Line(s)</label><br>
-                <div id="cor_lines-input" hidden><label>Lines:&nbsp;</label>
-                    <input type="text" id="cor_lines"/>
-                </div>
-                <input  type="radio" id="requested_both" name="requested_action" value="Both">
-                <label for="requested_both">COR & Cancel Line(s)</label><br>
-                <div id="both_lines-input" hidden>
-                    <label for="both_cor_lines">COR Lines:&nbsp;</label>
-                    <input type="text" id="both_cor_lines"/>
-                    <label for="both_cancelled_lines">Cancelled Lines:&nbsp;</label>
-                    <input type="text" id="both_cancelled_lines"/>
-                </div>
-                <input  type="radio" id="requested_portout" name="requested_action" value="Port Out">
-                <label for="requested_portout">Port Out</label><br>
-                <div id="portout-input" hidden><label for="portout_date">Date to Finish Backend:&nbsp;</label>
-                    <input type="date" id="portout_date"/>
-                </div>
-                <input  type="radio" id="requested_final" name="requested_action" value="Final attempt, sent email to CR"/>
-                <label for="requested_final">Final attempt, sent email to CR</label><br>
-                <div id="backend_date-input" hidden><label for="backend_date">Date to Finish Backend:&nbsp;</label>
-                    <input type="date" id="backend_date"/>
-                </div>
-            </div>        
-            <div class="col-md-4 error-message" hidden="" id="requested_action-error"></div>
-        </div>
-    
-        <div class="row">
-            <div class="col-md-4 my-auto labels"><label>Autopay Cancelled</label></div>
-            <div class="col-md-4 my-auto inputs">
-                <input type="checkbox" id="autopay_cancelled" class="form-input"/>
+        <div id="details_of_call" hidden>   
+            <div class="row">
+                <div class="col-md-3 my-auto labels"><label>Deceased Verification</label></div>
+                <div class="col-md-5 inputs my-auto" id="deceased_verification-radio">
+                    <input  type="radio" id="accurint" name="deceased_verification" value="Accurint, LexID: "/>
+                    <label for="accurint">Accurint</label><br>
+                    <div id="lexid-input" class="my-auto" hidden><label for="lexid">LexID:&nbsp;</label><br>
+                        <textarea id="lexid"></textarea>
+                    </div>
+                    <input  type="radio" id="online" name="deceased_verification" value="Online, Website: "/>
+                    <label for="online">Online</label><br>
+                    <div id="website-input" hidden><label for="website">Website:&nbsp;</label>
+                        <input type="text" id="website"/>
+                    </div>
+                    <input  type="radio" id="unverified_sms" name="deceased_verification" value="Unverified, sent SMS. MSISDN: "/>
+                    <label for="unverified_sms">Unverified, sent SMS</label><br>
+                    <div id="msisdn-input" hidden><label for="msisdn">MSISDN:&nbsp;</label>
+                        <input type="text" id="msisdn">
+                    </div>
+                    <input  type="radio" id="verified_physical" name="deceased_verification" value="Physical Documentation. File: "/>
+                    <label for="verified_physical">Physical</label><br>
+                    <div id="deceased_file-input" hidden><!--label for="deceased_file">File:&nbsp;</label-->
+                        <input type="file" id="deceased_file">
+                    </div>
+                    <input  type="radio" id="unverified_no_contact" name="deceased_verification" value="Could not contact or verify"/>
+                    <label for="unverified_no_contact">No contact/No verification</label><br>
+                </div>        
+                <div class="col-md-4 error-message" hidden="" id="deceased_verification-error"></div>
             </div>
-            <div class="col-md-4 error-message" hidden="" id="autopay_cancelled-error"></div>
-        </div>
+
+            <div class="row">
+                <div class="col-md-3 my-auto labels"><label>Requested Action</label></div>
+                <div class="col-md-5 inputs" id="requested_action-radio">
+                    <input  type="radio" id="requested_cancel" name="requested_action" value="0"/>
+                    <label for="requested_cancel">Cancel Line(s)</label><br>
+                    <div id="cancelled_lines-input" hidden><label class="cancelled_line_labels">Lines:&nbsp;</label>
+                        <input type="text" id="cancelled_lines"/>
+                    </div>
+                    <input  type="radio" id="requested_cor" name="requested_action" value="1">
+                    <label for="requested_cor">COR Line(s)</label><br>
+                    <div id="cor_lines-input" hidden><label>Lines:&nbsp;</label>
+                        <input type="text" id="cor_lines"/><br><p>Customer Policy: <a href="https://c2.t-mobile.com/accounts/change-of-responsibility-cor-existing-customer">Existing</a>, <a href="https://c2.t-mobile.com/accounts/change-of-responsibility-cor-potential-customer">Potential</a></p>
+                    </div>
+                    <input  type="radio" id="requested_both" name="requested_action" value="2">
+                    <label for="requested_both">COR & Cancel Line(s)</label><br>
+                    <div id="both_lines-input" hidden>
+                        <label for="both_cor_lines">COR Lines: </label>
+                        <input type="text" id="both_cor_lines"/><br><p>Customer Policy: <a href="https://c2.t-mobile.com/accounts/change-of-responsibility-cor-existing-customer">Existing</a>, <a href="https://c2.t-mobile.com/accounts/change-of-responsibility-cor-potential-customer">Potential</a></p>
+                        <label for="both_cancelled_lines">Cancelled Lines:&nbsp;</label>
+                        <input type="text" id="both_cancelled_lines"/>
+                    </div>
+                    <input  type="radio" id="requested_portout" name="requested_action" value="3">
+                    <label for="requested_portout">Port Out</label><br>
+                    <div id="portout-input" hidden ><label for="portout_date">Date to Finish Backend:&nbsp;</label>
+                        <input type="date" id="portout_date"/>
+                    </div>
+                    <input  type="radio" id="requested_final" name="requested_action" value="4"/>
+                    <label for="requested_final">Final attempt, sent email to CR</label><br>
+                    <div id="backend_date-input" hidden><label for="backend_date">Date to Finish Backend:&nbsp;</label>
+                        <input type="date" id="backend_date"/>
+                    </div>
+                </div>        
+                <div class="col-md-4 error-message" hidden="" id="requested_action-error"></div>
+            </div>
         
-        <div class="row">
-            <div class="col-md-4 my-auto labels"><label>Updated Billing Address</label></div>
-            <div class="col-md-4 my-auto inputs">
-                <input type="checkbox" id="updated_billing_address" class="form-input"/>
+            <div class="row">
+                <div class="col-md-3 my-auto labels"><label>Autopay Cancelled</label></div>
+                <div class="col-md-5 inputs">
+                    <input type="checkbox" id="autopay_cancelled" class="form-input"/>
+                </div>
+                <div class="col-md-4 error-message" hidden="" id="autopay_cancelled-error"></div>
             </div>
-            <div class="col-md-4 error-message" hidden="" id="updated_billing_address-error"></div>
-        </div>
-        
-        <div class="row">
-            <div class="col-md-4 my-auto labels"><label>Updated Billing Parameters</label></div>
-            <div class="col-md-4 my-auto inputs">
-                <input type="checkbox" id="updated_billing_parameters" class="form-input"/>
+            
+            <div class="row">
+                <div class="col-md-3 my-auto labels"><label>Alternate Billing Address</label></div>
+                <div class="col-md-5 inputs">
+                    <input type="checkbox" id="alternate_billing_address" class="form-input"/>
+                </div>
+                <div class="col-md-4 error-message" hidden="" id="alternate_billing_address-error"></div>
             </div>
-            <div class="col-md-4 error-message" hidden="" id="updated_billing_parameters-error"></div>
+            
+            <div class="row">
+                <div class="col-md-3 my-auto labels"><label>Updated Billing Parameters</label></div>
+                <div class="col-md-5 inputs">
+                    <input type="checkbox" id="updated_billing_parameters" class="form-input"/>
+                </div>
+                <div class="col-md-4 error-message" hidden="" id="updated_billing_parameters-error"></div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-3 my-auto labels"><label>Special Instructions</label></div>
+                <div class="col-md-5 inputs"><input type="checkbox" id="special_instruction" class="form-input"/>
+                    <!--textarea hidden id="special_instructions"></textarea-->
+                </div>
+                <div class="col-md-4"></div>        
+            </div>
+
+            <div class="row">
+                <div class="col-md-3 my-auto labels"><label>EIP Status</label></div>
+                <div class="col-md-5 inputs" id="eip_radio">
+                    <input  type="radio" id="eip_transferred" name="eip_status" value="1"/>
+                    <label for="eip_transferred">Transferred</label><br>
+                    <div id="eip_transfer_email-input" hidden><label for="eip_transfer_email">Email:&nbsp;</label>
+                        <input type="email" id="eip_transfer_email"/>
+                    </div>
+                    <input  type="radio" id="eip_closed" name="eip_status" value="2"/>
+                    <label for="eip_closed">Closed</label><br>
+                    <input  type="radio" id="eip_na" name="eip_status" value="3"/>
+                    <label for="eip_na">N/A</label><br>   
+                </div>
+                <div class="col-md-4 error-message" hidden="" id="eip_status-error"></div>
+            </div>
+
+            <div class="row" id="eip_dependent" hidden>
+                <div class="col-md-3 my-auto labels"><label>DEIPCR Credit</label></div>
+                <div class="col-md-5 inputs" id="deipcr_radio">
+                    <input  type="radio" id="deipcr_applied" name="deipcr_credit" value="1"/>
+                    <label for="deipcr_applied">Applied</label><br>
+                    <div id="deipcr_applied_lines-input" hidden><label class="deipcr_applied_line_labels">Lines:&nbsp;</label>
+                        <input type="text" id="deipcr_applied_lines"/>
+                    </div>
+                    <div class="row" id="deipcr_applied_dependent" hidden>
+                        <div>
+                        <label for="credit_what">What:&nbsp;</label>
+                        <input type="text" id="credit_what"/><br></div>
+                        <div>
+                        <label for="credit_why">Why:&nbsp;</label>
+                        <input type="text" id="credit_why"/><br></div>
+                        <div>
+                            <label for="credit_adj">Adj. Amount:&nbsp;</label>
+                            <input type="number" step="0.01" id="credit_adj"/><br>
+                        </div>
+                        <div>
+                            <label for="credit_math">Math:&nbsp;</label>
+                            <input type="text" id="credit_math"/><br>
+                        </div>
+                        <div>
+                            <label for="credit_cycle">Billing Cycle:&nbsp;</label>
+                            <input type="text" id="credit_cycle"/><br>
+                        </div>
+                        <div>
+                            <label for="credit_approve">Approved By:&nbsp;</label>
+                            <input type="text" id="credit_approve"/><br>
+                        </div>
+                    </div>
+                    <input  type="radio" id="deipcr_ineligible" name="deipcr_credit" value="2"/>
+                    <label for="deipcr_ineligible">Ineligible</label><br>
+                    <div id="deipcr_ineligible_lines-input" hidden><label class="deipcr_ineligible_line_labels">Lines:&nbsp;</label>
+                        <input type="text" id="deipcr_ineligible_lines"/>
+                    </div>
+                    <div id="deipcr_ineligible-reason_input" hidden>
+                        <label for="deipcr_ineligible_reason">Reason:&nbsp;</label>
+                        <input type="text" id="deipcr_ineligible_reason"/>
+                    </div>
+                    <input  type="radio" id="deipcr_na" name="deipcr_credit" value="3"/>
+                    <label for="deipcr_na">N/A</label><br>   
+                </div>
+                <div class="col-md-4 error-message" hidden="" id="deipcr_credit-error"></div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-3 my-auto labels"><label>JOD Return Status</label></div>
+                <div class="col-md-5 inputs" id="jod-radio">
+                    <input  type="radio" id="jod_return_complete" name="jod_status" value="1"/>
+                    <label for="jod_return_complete">Completed</label><br>
+                    <div id="jod_ordernumber-input" hidden><label for="jod_ordernumber">Order Number:&nbsp;</label>
+                        <input type="text" id="jod_ordernumber"/>
+                    </div>
+                    <input  type="radio" id="jod_return_incomplete" name="jod_status" value="2"/>
+                    <label for="jod_return_incomplete">Incomplete</label><br>
+                    <div id="jod_reason-input" hidden><label for="jod_reason">Reason:&nbsp;</label>
+                        <input type="text" id="jod_reason"/>
+                    </div>
+                    
+                    <input  type="radio" id="jod_na" name="jod_status" value="3"/>
+                    <label for="jod_na">N/A</label><br>   
+                </div>
+                <div class="col-md-4 error-message" hidden="" id="jod_status-error"></div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-3 my-auto labels"><label>HSI Return Status</label></div>
+                <div class="col-md-5 inputs" id="hsi-radio">
+                    <input  type="radio" id="hsi_return_processed" name="hsi_status" value="1"/>
+                    <label for="hsi_return_processed">Processed</label><br>
+                    <div id="hsi_ordernumber-input" hidden><label for="hsi_ordernumber">Order Number:&nbsp;</label>
+                        <input type="text" id="hsi_ordernumber"/>
+                    </div>
+                    <input  type="radio" id="hsi_return_unprocessed" name="hsi_status" value="2"/>
+                    <label for="hsi_return_unprocessed">Unprocessed</label><br>
+                    <div id="hsi_reason-input" hidden><label for="hsi_reason">Reason:&nbsp;</label>
+                        <input type="text" id="hsi_reason"/>
+                    </div>
+                    <input  type="radio" id="hsi_na" name="hsi_status" value="3"/>
+                    <label for="hsi_na">N/A</label><br>   
+                </div>
+                <div class="col-md-4 error-message" hidden="" id="hsi_status-error"></div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-3 my-auto labels"><label>BAN Cancelled as FACD</label></div>
+                <div class="col-md-5 inputs" id="ban_as_facd-radio">
+                    <input  type="radio" id="ban_cancelled" name="ban_as_facd" value="1"/>
+                    <label for="ban_cancelled">Cancelled</label><br>
+                    <div id="ban_date-input" hidden><label for="ban_date">Effective Date:&nbsp;</label>
+                        <input type="date" id="ban_date"/><br>
+                    </div>
+                    <input  type="radio" id="ban_followup" name="ban_as_facd" value="2"/>
+                    <label for="ban_followup">Follow up, CR response email sent</label><br>
+                    <input  type="radio" id="ban_na" name="ban_as_facd" value="3"/>
+                    <label for="ban_na">N/A</label><br>   
+                </div>
+                <div class="col-md-4 error-message" hidden="" id="ban_as_facd-error"></div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-3 my-auto labels"><label>Sharepoint Reviewed</label></div>
+                <div class="col-md-5 inputs" id="sharepoint_radio">
+                    <input type="radio" id="sharepoint_complete" name="sharepoint_updated" value="0"/>
+                    <label for="sharepoint_complete">Complete</label><br>
+                    <input type="radio" id="sharepoint_inprogress" name="sharepoint_updated" value="1"/>
+                    <label for="sharepoint_inprogress">In Progress</label><br>
+                    <div id="sharepoint_dependent" hidden>
+                        <input  type="checkbox" id="sharepoint_followup" name="sharepoint_followup"/>
+                        <label for="sharepoint_followup">Follow up, CR response email sent</label>
+                    </div>
+                    <input type="radio" id="sharepoint_invalid" name="sharepoint_updated" value="2"/>
+                    <label for="sharepoint_invalid">Invalid</label><br>
+                </div>
+                <div class="col-md-4 error-message" hidden="" id="sharepoint-error"></div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-3 my-auto labels"><label>Followed COR Policy</label></div>
+                <div class="col-md-5 inputs">
+                    <input type="checkbox" id="cor_policy" name="cor_policy" class="form-input"/>
+                </div>
+                <div class="col-md-4 error-message" hidden="" id="cor_policy-error"></div>
+            </div>
         </div>
 
         <div class="row">
-            <div class="col-md-4 my-auto labels"><label>Special Instructions</label></div>
-            <div class="col-md-4 inputs"><input type="checkbox" id="special_instruction" class="form-input"/>
-                <textarea hidden id="special_instructions"></textarea>
-            </div>
-            <div class="col-md-4"></div>        
-        </div>
-
-        <div class="row">
-            <div class="col-md-4 my-auto labels"><label>EIP Status</label></div>
-            <div class="col-md-4 inputs" id="eip_radio">
-                <input  type="radio" id="eip_transferred" name="eip_status" value="1"/>
-                <label for="eip_transferred">Transferred</label><br>
-                <div id="eip_transfer_email-input" hidden><label for="eip_transfer_email">Email:&nbsp;</label>
-                    <input type="email" id="eip_transfer_email"/>
-                </div>
-                <input  type="radio" id="eip_closed" name="eip_status" value="2"/>
-                <label for="eip_closed">Closed</label><br>
-                <input  type="radio" id="eip_na" name="eip_status" value="3"/>
-                <label for="eip_na">N/A</label><br>   
-            </div>
-            <div class="col-md-4 error-message" hidden="" id="eip_status-error"></div>
-        </div>
-
-        <div class="row">
-            <div class="col-md-4 my-auto labels"><label>DEIPCR Credit</label></div>
-            <div class="col-md-4 inputs" id="deipcr_radio">
-                <input  type="radio" id="deipcr_applied" name="deipcr_credit" value="1"/>
-                <label for="deipcr_applied">Applied</label><br>
-                <div id="deipcr_applied_lines-input" hidden><label class="deipcr_applied_line_labels">Lines:&nbsp;</label>
-                    <input type="text" id="deipcr_applied_lines"/>
-                </div>
-                <div id="deipcr_applied-amount_input" hidden>
-                    <label for="deipcr_applied-amount">Total Amount:&nbsp;</label><br>
-                    <input type="number" step="0.01" id="deipcr_applied-amount"/>
-                </div>
-                <input  type="radio" id="deipcr_ineligible" name="deipcr_credit" value="2"/>
-                <label for="deipcr_ineligible">Ineligible</label><br>
-                <div id="deipcr_ineligible_lines-input" hidden><label class="deipcr_ineligible_line_labels">Lines:&nbsp;</label>
-                    <input type="text" id="deipcr_ineligible_lines"/>
-                </div>
-                <div id="deipcr_ineligible-reason_input" hidden>
-                    <label for="deipcr_ineligible-reason">Reason:&nbsp;</label>
-                    <input type="text" id="deipcr_ineligible-reason"/>
-                </div>
-                <input  type="radio" id="deipcr_na" name="deipcr_credit" value="3"/>
-                <label for="deipcr_na">N/A</label><br>   
-            </div>
-            <div class="col-md-4 error-message" hidden="" id="deipcr_credit-error"></div>
-        </div>
-
-        <div class="row">
-            <div class="col-md-4 my-auto labels"><label>JOD Return Status</label></div>
-            <div class="col-md-4 inputs" id="jod-radio">
-                <input  type="radio" id="jod_return_complete" name="jod_status" value="1"/>
-                <label for="jod_return_complete">Completed</label><br>
-                <div id="jod_ordernumber-input" hidden><label for="jod_ordernumber">Order Number:&nbsp;</label>
-                    <input type="text" id="jod_ordernumber"/>
-                </div>
-                <input  type="radio" id="jod_return_incomplete" name="jod_status" value="2"/>
-                <label for="jod_return_incomplete">Incomplete</label><br>
-                <div id="jod_reason-input" hidden><label for="jod_reason">Reason:&nbsp;</label>
-                    <input type="text" id="jod_reason"/>
-                </div>
-                
-                <input  type="radio" id="jod_na" name="jod_status" value="3"/>
-                <label for="jod_na">N/A</label><br>   
-            </div>
-            <div class="col-md-4 error-message" hidden="" id="jod_status-error"></div>
-        </div>
-
-        <div class="row">
-            <div class="col-md-4 my-auto labels"><label>HSI Return Status</label></div>
-            <div class="col-md-4 inputs" id="hsi-radio">
-                <input  type="radio" id="hsi_return_processed" name="hsi_status" value="1"/>
-                <label for="hsi_return_processed">Processed</label><br>
-                <div id="hsi_ordernumber-input" hidden><label for="hsi_ordernumber">Order Number:&nbsp;</label>
-                    <input type="text" id="hsi_ordernumber"/>
-                </div>
-                <input  type="radio" id="hsi_return_unprocessed" name="hsi_status" value="2"/>
-                <label for="hsi_return_unprocessed">Unprocessed</label><br>
-                <div id="hsi_reason-input" hidden><label for="hsi_reason">Reason:&nbsp;</label>
-                    <input type="text" id="hsi_reason"/>
-                </div>
-                <input  type="radio" id="hsi_na" name="hsi_status" value="3"/>
-                <label for="hsi_na">N/A</label><br>   
-            </div>
-            <div class="col-md-4 error-message" hidden="" id="hsi_status-error"></div>
-        </div>
-
-        <div class="row">
-            <div class="col-md-4 my-auto labels"><label>BAN Cancelled as FACD</label></div>
-            <div class="col-md-4 inputs">
-                <input  type="radio" id="ban_cancelled" name="ban_as_facd" value="1"/>
-                <label for="ban_cancelled">Cancelled</label><br>
-                <input  type="radio" id="ban_followup" name="ban_as_facd" value="2"/>
-                <label for="ban_followup">Follow up, CR response email sent</label><br>
-                <input  type="radio" id="ban_na" name="ban_as_facd" value="3"/>
-                <label for="ban_na">N/A</label><br>   
-            </div>
-            <div class="col-md-4 error-message" hidden="" id="ban_as_facd-error"></div>
-        </div>
-
-        <div class="row">
-            <div class="col-md-4 my-auto labels"><label>Sharepoint Reviewed</label></div>
-            <div class="col-md-4 inputs">
-                <input  type="radio" id="sharepoint_updated" name="sharepoint" value="1"/>
-                <label for="sharepoint_updated">Updated</label><br>
-                <input  type="radio" id="sharepoint_followup" name="sharepoint" value="2"/>
-                <label for="sharepoint_followup">Follow up, CR response email sent</label><br> 
-            </div>
-            <div class="col-md-4 error-message" hidden="" id="sharepoint-error"></div>
-        </div>
-
-        <div class="row">
-            <div class="col-md-4 my-auto labels"><label>Followed COR Policy</label></div>
-            <div class="col-md-4 my-auto inputs">
-                <input type="checkbox" id="cor_policy" name="cor_policy" class="form-input"/>
-            </div>
-            <div class="col-md-4 error-message" hidden="" id="cor_policy-error"></div>
-        </div>
-
-        <div class="row">
-            <div class="col-md-4 my-auto labels"><label>Overall Status</label></div>
-            <div class="col-md-4 inputs"><select  id="overall_status" name="overall_status" class="form-input">
+            <div class="col-md-3 my-auto labels"><label>Overall Status</label></div>
+            <div class="col-md-5 inputs"><select  id="overall_status" name="overall_status" class="form-input">
                     <option></option>
                     <option value="1">Completed</option>
                     <option value="2">In Progress (scheduled callback)</option>
@@ -304,15 +368,15 @@
         </div>
 
         <div class="row">
-            <div class="col-md-4 my-auto labels"><label>Additional Memos</label></div>
-            <div class="col-md-4 inputs"><textarea id="additional_memo" name="additional_memo" class="form-input"></textarea></div>
+            <div class="col-md-3 my-auto labels"><label>Additional Memos</label></div>
+            <div class="col-md-5 inputs"><textarea id="additional_memo" name="additional_memo" class="form-input"></textarea></div>
             <div class="col-md-4 error-message" hidden="" id="additional_memo-error"></div>
         </div>
 <hr>
         <div class="row">
             <div class="col-md-4"></div>
             <div class="col-md-5 text-center my-auto"><button type="button" onclick="generateMemo()">Generate Memo</button></div>
-            <div class="col-md-3 text-center my-auto"><input type="reset" value="Reset"/></div>
+            <div class="col-md-3 text-center my-auto"><button type="button" onclick="location.reload()">Reset</button></div>
         </div>
         <br>
         
@@ -331,10 +395,9 @@
             const phone_number = form.phone_number;
             const call_result = form.call_result;
             const executive_action = form.executive_action;
-            const requested_action = form.requested_action;
             const deceased_verification = form.deceased_verification;
             const autopay_cancelled = form.autopay_cancelled;
-            const updated_billing_address = form.updated_billing_address;
+            const alternate_billing_address = form.alternate_billing_address;
             const updated_billing_parameters = form.updated_billing_parameters;
             const special_instruction = form.special_instruction;
             const eip_status = form.eip_status;
@@ -348,7 +411,9 @@
             const additional_memo = form.additional_memo;
 
         
-        const contact_attempt_input = document.getElementById('contact_attempt-input');
+        const call_detail_inputs = document.getElementById('details_of_call');
+        const call_result_radio = document.getElementById('call_result-radio');
+        const callback_date_div = document.getElementById('callback_date-input');
         const requested_action_radio = document.getElementById('requested_action-radio');
         const deceased_verification_radio = document.getElementById('deceased_verification-radio');
         const jod_radio = document.getElementById('jod-radio');
@@ -356,20 +421,20 @@
         const cancelled_lines_input = document.getElementById('cancelled_lines-input');
         const cor_lines_input = document.getElementById('cor_lines-input');
         const eip_radio = document.getElementById('eip_radio');
-        const eip_transfer = document.getElementById('eip_transferred');
         const deipcr_applied_lines_input = document.getElementById('deipcr_applied_lines-input');
         const deipcr_applied_lines = document.getElementById('deipcr_applied_line-amount');
         const deipcr_ineligible_reason_div = document.getElementById('deipcr_ineligible-reason_input');
         const deipcr_ineligible_lines_input = document.getElementById('deipcr_ineligible_lines-input');
         const deipcr_radio = document.getElementById('deipcr_radio');
-
-        call_direction[0].parentElement.addEventListener('click', (event)=>{
-            if(call_direction.value === 'Outbound'){
-                contact_attempt_input.hidden = false;
-            }else if(call_direction.value === 'Inbound'){
-                contact_attempt_input.hidden = true;
-            }
-        });
+        const ban_radio = document.getElementById('ban_as_facd-radio');
+        const ban_cancelled_date = document.getElementById('ban_date-input');
+        const eip_dependent = document.getElementById('eip_dependent');
+        const sharepoint_radio = document.getElementById('sharepoint_radio');
+        const sharepoint_dependent = document.getElementById('sharepoint_dependent');
+        const voicemail_dependent = document.getElementById('voicemail_dependent');
+        const vm_script = document.getElementById('vm_script');
+        const invalid_dependent = document.getElementById('invalid_dependent');
+        const resolved_dependent = document.getElementById('resolved_dependent');
 
         executive_action.addEventListener('click', ()=>{
             if(executive_action.checked){
@@ -379,33 +444,63 @@
             }
         });
 
+        call_result_radio.addEventListener('click', (event)=>{
+            callback_date_div.hidden = false;
+            voicemail_dependent.hidden = true;
+            vm_script.hidden = true;
+            invalid_dependent.hidden = true;
+            resolved_dependent.hidden = true;
+            const resultVal = parseInt(call_result.value);
+            if(resultVal <= 1){
+                call_detail_inputs.hidden = false;
+                if(resultVal === 0){
+                    callback_date_div.hidden = true;
+                }
+            }else if(resultVal >= 2) {
+                call_detail_inputs.hidden = true;
+                if(resultVal === 2){
+                    voicemail_dependent.hidden = false;
+                    vm_script.hidden = false;
+                }else if(resultVal === 4){
+                    invalid_dependent.hidden = false;
+                    callback_date_div.hidden = true;
+                }else if(resultVal === 5){
+                    resolved_dependent.hidden = false;
+                    callback_date_div.hidden = true;
+                }else if(resultVal === 6){
+                    callback_date_div.hidden = true;
+                }
+            }
+        });
+
         requested_action_radio.addEventListener('click', (event)=>{
-            if(document.getElementById('requested_cancel').checked){
+            const requested_action = form.requested_action;
+            if(requested_action[0].checked){
                 cor_lines_input.hidden = true;
                 document.getElementById('portout-input').hidden = true;
                 document.getElementById('backend_date-input').hidden = true;
                 document.getElementById('both_lines-input').hidden = true;
                 cancelled_lines_input.hidden = false;
-            }else if(document.getElementById('requested_cor').checked){
+            }else if(requested_action[1].checked){
                 document.getElementById('portout-input').hidden = true;
                 document.getElementById('backend_date-input').hidden = true;
                 cancelled_lines_input.hidden = true;
                 document.getElementById('both_lines-input').hidden = true;
                 cor_lines_input.hidden = false;
             }
-            if(document.getElementById('requested_both').checked){
+            if(requested_action[2].checked){
                 document.getElementById('portout-input').hidden = true;
                 document.getElementById('backend_date-input').hidden = true;
                 cancelled_lines_input.hidden = true;
                 cor_lines_input.hidden = true;
                 document.getElementById('both_lines-input').hidden = false;
-            }else if(document.getElementById('requested_portout').checked){
+            }else if(requested_action[3].checked){
                 cor_lines_input.hidden = true;
                 document.getElementById('backend_date-input').hidden = true;
                 cancelled_lines_input.hidden = true;
                 document.getElementById('both_lines-input').hidden = true;
                 document.getElementById('portout-input').hidden = false;
-            }else if(document.getElementById('requested_final').checked){
+            }else if(requested_action[4].checked){
                 cor_lines_input.hidden = true;
                 document.getElementById('portout-input').hidden = true;
                 cancelled_lines_input.hidden = true;
@@ -416,120 +511,123 @@
         });
         
         deceased_verification_radio.addEventListener('click', (event)=>{
-            if(document.getElementById('accurint').checked){
+            if(deceased_verification[0].checked){
                 document.getElementById('website-input').hidden = true;
                 document.getElementById('msisdn-input').hidden = true;
-                document.getElementById('deceased_file-input').hidden = true;
                 document.getElementById('lexid-input').hidden = false;
-            }else if(document.getElementById('online').checked){
+            }else if(deceased_verification[1].checked){
                 document.getElementById('lexid-input').hidden = true;
                 document.getElementById('msisdn-input').hidden = true;
-                document.getElementById('deceased_file-input').hidden = true;
                 document.getElementById('website-input').hidden = false;
-            }else if(document.getElementById('unverified_sms').checked){
+            }else if(deceased_verification[2].checked){
                 document.getElementById('lexid-input').hidden = true;
                 document.getElementById('website-input').hidden = true;
-                document.getElementById('deceased_file-input').hidden = true;
                 document.getElementById('msisdn-input').hidden = false;
-            }else if(document.getElementById('verified_physical').checked){
+            }else if(deceased_verification[3].checked || deceased_verification[4].checked){
                 document.getElementById('lexid-input').hidden = true;
                 document.getElementById('website-input').hidden = true;
                 document.getElementById('msisdn-input').hidden = true;
-                document.getElementById('deceased_file-input').hidden = false;
-            }else if(document.getElementById('unverified_no_contact').checked){
-                document.getElementById('lexid-input').hidden = true;
-                document.getElementById('website-input').hidden = true;
-                document.getElementById('msisdn-input').hidden = true;
-                document.getElementById('deceased_file-input').hidden = true;
             }
         });
 
-        special_instruction.addEventListener('click', ()=>{
+        /*special_instruction.addEventListener('click', ()=>{
             if(special_instruction.checked){
                 document.getElementById('special_instructions').hidden = false;
             }else{
                 document.getElementById('special_instructions').hidden = true;
             }
-        });
+        });*/
 
         eip_radio.addEventListener('click', (event)=>{
-            if(eip_transfer.checked){
+            if(eip_status[0].checked){
                 document.getElementById('eip_transfer_email-input').hidden = false;
+                eip_dependent.hidden = false;
             }else{
                 document.getElementById('eip_transfer_email-input').hidden = true;
+                eip_dependent.hidden = true;
             }
         });
 
         deipcr_radio.addEventListener('click', (event)=>{
-            if(document.getElementById('deipcr_applied').checked){
+            if(deipcr_credit[0].checked){
                 document.getElementById('deipcr_ineligible-reason_input').hidden = true;
                 document.getElementById('deipcr_ineligible_lines-input').hidden = true;
                 document.getElementById('deipcr_applied_lines-input').hidden = false;
-                document.getElementById('deipcr_applied-amount_input').hidden = false;
-            }else if(document.getElementById('deipcr_ineligible').checked){
+                document.getElementById('deipcr_applied_dependent').hidden = false;
+            }else if(deipcr_credit[1].checked){
                 document.getElementById('deipcr_applied_lines-input').hidden = true;
-                document.getElementById('deipcr_applied-amount_input').hidden = true;
+                document.getElementById('deipcr_applied_dependent').hidden = true;
                 document.getElementById('deipcr_ineligible_lines-input').hidden = false;
                 document.getElementById('deipcr_ineligible-reason_input').hidden = false;
             }else{
                 document.getElementById('deipcr_applied_lines-input').hidden = true;
-                document.getElementById('deipcr_applied-amount_input').hidden = true;
+                document.getElementById('deipcr_applied_dependent').hidden = true;
                 document.getElementById('deipcr_ineligible_lines-input').hidden = true;
                 document.getElementById('deipcr_ineligible-reason_input').hidden = true;
             }
         });
-
-
        
         jod_radio.addEventListener('click', (event)=>{
-            if(document.getElementById('jod_return_complete').checked){
+            if(jod_status[0].checked){
                 document.getElementById('jod_ordernumber-input').hidden = false;
                 document.getElementById('jod_reason-input').hidden = true;
-            }else if(document.getElementById('jod_return_incomplete').checked){
+            }else if(jod_status[1].checked){
                 document.getElementById('jod_ordernumber-input').hidden = true;
                 document.getElementById('jod_reason-input').hidden = false;
-            }else if(document.getElementById('jod_na').checked){
+            }else if(jod_status[2].checked){
                 document.getElementById('jod_ordernumber-input').hidden = true;
                 document.getElementById('jod_reason-input').hidden = true;
             }
         });
         hsi_radio.addEventListener('click', (event)=>{
-            if(document.getElementById('hsi_return_processed').checked){
+            if(hsi_status[0].checked){
                 document.getElementById('hsi_ordernumber-input').hidden = false;
                 document.getElementById('hsi_reason-input').hidden = true;
-            }else if(document.getElementById('hsi_return_unprocessed').checked){
+            }else if(hsi_status[1].checked){
                 document.getElementById('hsi_ordernumber-input').hidden = true;
                 document.getElementById('hsi_reason-input').hidden = false;
-            }else if(document.getElementById('hsi_na').checked){
+            }else{
                 document.getElementById('hsi_ordernumber-input').hidden = true;
                 document.getElementById('hsi_reason-input').hidden = true;
             }
         });
 
-        function setNewRow(display, displayRow, displayText){
-            displayRow.appendChild(displayText.cloneNode(true));
-            //display.appendChild(displayRow.cloneNode(true));
-            //displayRow.innerHTML = '';
-        }
+        ban_radio.addEventListener('click', (event)=>{
+            if(ban_as_facd[0].checked){
+                ban_cancelled_date.hidden = false;
+            }else{
+                ban_cancelled_date.hidden = true;
+            }
+        });
+
+        sharepoint_radio.addEventListener('click', (event)=>{
+            if(form.sharepoint_inprogress.checked){
+                sharepoint_dependent.hidden = false;
+            }else{
+                sharepoint_dependent.hidden = true;
+            }
+        });
+
+        
 
         function generateMemo() {
             const display = document.getElementById('display-container');
             display.innerHTML = '&nbsp;';
             const displayRow = document.createElement('div');
                 displayRow.setAttribute('class', 'row'); 
-            const displayText = document.createElement('pre');
+            const displayText = document.createElement('p');
                 displayText.setAttribute('class', 'col-md-12');
             let validate = false;
 
             //Call Direction
             if(call_direction.value.length > 0){
                 document.getElementById('call_direction-error').hidden = true;
-                if(call_direction.value === 'Inbound'){
-                    displayText.innerHTML += 'DECEASE BRP Request: Inbound<br>';
-                }else if(call_direction.value === 'Outbound'){
-                    displayText.innerHTML += 'DECEASE BRP Request: Outbound<br>';
+                if(form.inbound){
+                    displayText.innerHTML += 'DECEASE BRP Request Inbound:<br>';
+                }else if(form.outbound){
+                    displayText.innerHTML += 'DECEASE BRP Request Outbound:<br>';
                 }
-                //setNewRow(display, displayRow, displayText);
+               
             }else if(call_direction.value.length === 0){
                 document.getElementById('call_direction-error').hidden = false;
                 document.getElementById('call_direction-error').innerText = 'Please select direction of the call.';
@@ -537,23 +635,20 @@
             } 
 
             //Contact Attempt
-            if(!contact_attempt_input.hidden){
-                if(contact_attempt.value.length > 0){
-                    document.getElementById('contact_attempt-error').hidden = true;
-                    displayText.innerHTML += 'Attempt: '+contact_attempt.value+'<br>';
-                // setNewRow(display, displayRow, displayText);
-                }
-                else if(contact_attempt.value.length === 0){
-                    document.getElementById('contact_attempt-error').hidden = false;
-                    document.getElementById('contact_attempt-error').innerText = 'Please select the current contact attempt.';
-                    display.innerHTML = '&nbsp;';
-                } 
+            if(contact_attempt.value.length > 0){
+                document.getElementById('contact_attempt-error').hidden = true;
+                displayText.innerHTML += 'Attempt: '+contact_attempt.value+'<br>';
             }
+            else if(contact_attempt.value.length === 0){
+                document.getElementById('contact_attempt-error').hidden = false;
+                document.getElementById('contact_attempt-error').innerText = 'Please select the current contact attempt.';
+                validate = true;
+            } 
+            
             //Survivor Name
             if(survivor_name.value.length > 0){
                 document.getElementById('survivor_name-error').hidden = true;
-                displayText.innerHTML += 'Survivor Name: '+survivor_name.value+'<br>';
-                //setNewRow(display, displayRow, displayText);
+                displayText.innerHTML += 'Survivor Name: '+survivor_name.value+'<br>';      
             }
             else if(survivor_name.value.length === 0){
                 document.getElementById('survivor_name-error').hidden = false;
@@ -565,7 +660,7 @@
             if(phone_number.value.length > 0){
                 document.getElementById('phone_number-error').hidden = true;
                 displayText.innerHTML += 'Number Called: '+phone_number.value+'<br>';
-                //setNewRow(display, displayRow, displayText);
+               
             }else if(phone_number.value.length === 0){
                 document.getElementById('phone_number-error').hidden = false;
                 document.getElementById('phone_number-error').innerText = "Please input the phone number that was contacted.";
@@ -575,245 +670,250 @@
             //Call Results
             if(call_result.value.length > 0){
                 document.getElementById('call_result-error').hidden = true;
-                if(document.getElementById('process_completed').checked){
+                if(form.process_completed.checked){
                     displayText.innerHTML += 'Results of Call: Process Completed<br>';
-                }else if(document.getElementById('no_action').checked){
-                    displayText.innerHTML += 'Results of Call: Customer chose no action<br>';
-                }else if(document.getElementById('voicemail').checked){
-                    displayText.innerHTML += 'Results of Call: Voicemail with NORT no contact SMS<br>';
-                }else if(document.getElementById('no_contact').checked){
-                    displayText.innerHTML += 'Results of Call: Could not reach/leave message<br>';
+                }else if(form.no_action.checked){
+                    displayText.innerHTML += 'Results of Call: Customer chose no action, callback scheduled on '+form.callback_date.value+'<br>';
+                }else if(form.voicemail.checked){
+                    displayText.innerHTML += 'Results of Call: Un-carrier Outbound Resolution Team called cust and left V/M on [insert customer’s requested contact number] to assist in resolution of a Deceased BRP acct request. If the cust has ? or to proceed with resolution, they can return our call directly if dialing from the same device VM left on, at (800) 298-9746 during the hours of Mon-Fri 6am-4pm PT and Saturday 8am-4pm PT. NORT No Contact SMS send to '+
+                    form.sms.value + ' Callback scheduled on '+form.callback_date.value+'<br>';
+                }else if(form.no_action.checked){
+                    displayText.innerHTML += 'Results of Call: Could not reach/leave message, callback scheduled on '+form.callback_date.value+'<br>';
+                }else if(form.call_invalid.checked){
+                    displayText.innerHTML += 'Call Results Invalid: '
+                    if(form.invalid_memo.value === '0'){
+                        displayText.innerHTML += 'A Deceased BRP request was submitted indicating that the survivor requires a Spanish translator or is a Puerto Rico account. The National Outbound Resolution Team (NORT) is unable to handle Deceased Billing Responsible Party requests for Spanish speaking customers or Puerto Rico accounts. Please transfer to Customer Care: Spanish as outlined in policy: https://c2.t-mobile.com/accounts/deceased-brp-account-requests'
+                    }else if(form.invalid_memo.value === '1'){
+                        displayText.innerHTML += 'Invalid deceased BRP request. The can be reached number provided in the submission is invalid. Please resubmit with a valid CBR.'
+                    }else if(form.invalid_memo.value === '2'){
+                        displayText.innerHTML += 'A Deceased BRP request was submitted for a TFB account. The National Outbound Resolution Team (NORT) is unable to handle Deceased Billing Responsible Party requests for TFB. Please transfer to Customer Care: Business Care as outlined in policy: https://c2.t-mobile.com/accounts/deceased-brp-account-requests'
+                    }else if(form.invalid_memo.value === '3'){
+                        displayText.innerHTML += 'A Deceased BRP request was submitted for an account where the BRP is not deceased. The National Outbound Resolution Team (NORT) is unable to process requests where the BRP is alive, or requests for Power of Attorney. Please refer to policy for POA https://c2.t-mobile.com/accounts/power-of-attorney-add-remove-or-update , End user deceased https://c2.t-mobile.com/accounts/cancellation-quick-guide'
+                    }else if(form.invalid_memo.value === '4'){
+                        displayText.innerHTML += 'A Deceased BRP request was submitted for an account in Write Off where the BRP passed afterwards. This is an invalid request. Please follow the process outlined in policy https://c2.t-mobile.com/accounts/write-off-accounts'
+                    }
+                    displayText.innerHTML += '<br>'
+                }else if(form.already_resolved.checked){
+                    displayText.innerHTML += 'Results of Call: Already resolved on '+form.resolved_date.value+'<br>';
+                }else if(form.escalated.checked){
+                    displayText.innerHTML += 'Call Escalated, No Dial<br>';
                 }
                 if(executive_action.checked){
-                    const detailsSeparated = document.getElementById('executive_action-memo').value.split('\n');
-                    displayText.innerHTML += '      Executive Action - Approved by '+document.getElementById('executive').value+', Details: '+ detailsSeparated.join(', ')+'<br>';
+                    const detailsSeparated = form.executive_action_memo.value.split('\n');
+                    displayText.innerHTML += 'Executive Action - Approved by '+form.executive.value+', Details: '+ detailsSeparated.filter(word => word.length > 0).join(', ')+'<br>';
                 }
-                //setNewRow(display, displayRow, displayText);
+               
 
             }else if(call_result.value.length === 0){
                 document.getElementById('call_result-error').hidden = false;
                 document.getElementById('call_result-error').innerText = "Please select the call result.";
                 validate = true;
             } 
-            //Deceased Verification
-            if(deceased_verification.value.length > 0){
-                document.getElementById('deceased_verification-error').hidden = true;
-                if(document.getElementById('accurint').checked){
-                    const lexLinesSeparated = document.getElementById('lexid').value.split('\n');
-                    displayText.innerHTML += 'Documentation Verified with Accurint - LexID: <br>'+lexLinesSeparated.join('<br>')+'<br>';
-                }else if(document.getElementById('online').checked){
-                    displayText.innerHTML += 'Documentation Verified Online - Website: '+document.getElementById('website').value+'<br>';            
-                }else if(document.getElementById('verified_physical').checked){
-                    displayText.innerHTML += 'Documentation Verified Physicaly - File: '+document.getElementById('deceased_file-input').files[0]+'<br>';            
-                }else if(document.getElementById('unverified_sms').checked){
-                    displayText.innerHTML += 'Documentation Not Verified - MSISDN: '+document.getElementById('msisdn').value+'<br>';
-                }else if(document.getElementById('no_contact').checked){
-                    displayText.innerHTML += 'Documentation Not Verified - Could not contact or verify<br>';
-                }
-                //setNewRow(display, displayRow, displayText);
-
-            }else if(deceased_verification.value.length === 0){
-                document.getElementById('deceased_verification-error').hidden = false;
-                document.getElementById('deceased_verification-error').innerText = "Please select verification method.";
-                validate = true;
-            } 
-
-
-            //Requested Action 
-            if(requested_action.value.length > 0 || form.requested_cancel.checked){
-                document.getElementById('requested_action-error').hidden = true;
-                if(document.getElementById('requested_cancel').checked){
-                    displayText.innerHTML += 'Requested Action - Cancelled Lines: '+document.getElementById('cancelled_lines').value+'<br>';
-                }else if(document.getElementById('requested_cor').checked){
-                    displayText.innerHTML += 'Requested Action - COR Lines: '+document.getElementById('cor_lines').value+'<br>';
-                }else if(document.getElementById('requested_both').checked){
-                    displayText.innerHTML += 'Requested Action - COR Lines: '+document.getElementById('both_cor_lines').value+' Cancelled Lines: '+document.getElementById('both_cancelled_lines').value+'<br>';
-                }else if(document.getElementById('requested_portout').checked){
-                    displayText.innerHTML += 'Requested Action - Port Out Date: '+document.getElementById('portout_date').value+'<br>';
-                }else if(document.getElementById('requested_final').checked){
-                    displayText.innerHTML += 'Requested Action - Final attempt, email sent to CR. Set follow up Date: '+document.getElementById('backend_date').value+'<br>';
-                }
-                //setNewRow(display, displayRow, displayText);
-
-            }else if(requested_action.value.length === 0){
-                document.getElementById('requested_action-error').hidden = false;
-                document.getElementById('requested_action-error').innerText = "Please select the requested action.";
-                validate = true;
-            }
-
-            //Autopay Cancelled
-            if(autopay_cancelled.checked){
-                displayText.innerHTML += 'Autopay Cancelled<br>';
-                //setNewRow(display, displayRow, displayText);
-            }
-            
-            //Updated Billing Address
-            if(updated_billing_address.checked){
-                displayText.innerHTML += 'Alternate Billing Address Updated<br>';
-                //setNewRow(display, displayRow, displayText);
-            }
-            
-            //Updated Billing Parameters
-            if(updated_billing_parameters.checked){
-                displayText.innerHTML += 'Billing Parameters Changed<br>';
-                //setNewRow(display, displayRow, displayText);
-            }
-            
-            //Special Instructions
-            if(special_instruction.checked){
-                const instructionsSeparated = document.getElementById('special_instructions').value.split('\n');
-                displayText.innerHTML += 'Special Instructions Added: '+ instructionsSeparated.join(', ')+'<br>';
-                //setNewRow(display, displayRow, displayText);
-            }
-
-            //EIP Status 
-            if(eip_status.value.length > 0){
-                document.getElementById('eip_status-error').hidden = true;
-                if(document.getElementById('eip_transferred').checked){
-                    displayText.innerHTML += 'EIP Transferred - Email: '+document.getElementById('eip_transfer_email').value+'<br>';
-                }else if(document.getElementById('eip_closed').checked){
-                    displayText.innerHTML += 'EIP Closed<br>';
-                }else if(document.getElementById('eip_na').checked){
-                    displayText.innerHTML += 'EIP N/A<br>';
-                }
-                //setNewRow(display, displayRow, displayText);
-
-            }else if(eip_status.value.length === 0){
-                document.getElementById('eip_status-error').hidden = false;
-                document.getElementById('eip_status-error').innerText = "Please select the EIP status.";
-                validate = true;
-            } 
-            
-            //DEIPCR Credit 
-            if(deipcr_credit.value.length > 0){
-                document.getElementById('deipcr_credit-error').hidden = true;
-                if(document.getElementById('deipcr_applied').checked){
-                    displayText.innerHTML += 'DEIPCR Applied - Lines: '+document.getElementById('deipcr_applied_lines').value+
-                        ' Amount: '+document.getElementById('deipcr_applied-amount').value+'<br>';
-                }else if(document.getElementById('deipcr_ineligible').checked){
-                    displayText.innerHTML += 'DEIPCR Ineligible - Lines: '+document.getElementById('deipcr_ineligible_lines').value+
-                        ' Reason: '+document.getElementById('deipcr_ineligible-reason').value+'<br>';
-                }else if(document.getElementById('deipcr_na').checked){
-                    displayText.innerHTML += 'DEIPCR N/A<br>';
+            if(!call_detail_inputs.hidden){
+                //Deceased Verification
+                if(deceased_verification.value.length > 0){
+                    document.getElementById('deceased_verification-error').hidden = true;
+                    if(form.accurint.checked){
+                        const lexLinesSeparated = form.lexid.value.split('\n');
+                        displayText.innerHTML += 'Documentation Verified with Accurint - LexID: '+lexLinesSeparated.filter(word => word.length > 0).join(', ')+'<br>';
+                    }else if(form.online.checked){
+                        displayText.innerHTML += 'Documentation Verified Online - Website: '+form.website.value+'<br>';            
+                    }else if(form.verified_physical.checked){
+                        displayText.innerHTML += 'Documentation Verified Physically <br>';            
+                    }else if(form.unverified_sms.checked){
+                        displayText.innerHTML += 'Documentation Not Verified Sent SMS - MSISDN: '+form.msisdn.value+'<br>';
+                    }else if(form.unverified_no_contact.checked){
+                        displayText.innerHTML += 'Documentation Not Verified - No Contact <br>';
+                    }
+                }else if(deceased_verification.value.length === 0){
+                    document.getElementById('deceased_verification-error').hidden = false;
+                    document.getElementById('deceased_verification-error').innerText = "Please select verification method.";
+                    validate = true;
                 } 
-                //setNewRow(display, displayRow, displayText);
 
-            }else if(deipcr_credit.value.length === 0){
-                document.getElementById('deipcr_credit-error').hidden = false;
-                document.getElementById('deipcr_credit-error').innerText = "Please input whether DEIPCR credit was applied.";
-                display.innerHTML = '&nbsp;';
-            } 
-            
-            //JOD Return Status 
-            if(jod_status.value.length > 0){
-                document.getElementById('jod_status-error').hidden = true;
-                if(document.getElementById('jod_return_complete').checked){
-                    displayText.innerHTML += 'JOD Return Complete - Order Number: '+document.getElementById('jod_ordernumber').value+'<br>';
-                }else if(document.getElementById('jod_return_incomplete').checked){
-                    displayText.innerHTML += 'JOD Return Incomplete - Reason: '+document.getElementById('jod_reason').value+'<br>';
-                }else if(document.getElementById('jod_na').checked){
+                //Requested Action 
+                if(form.requested_action.value.length > 0){
+                    document.getElementById('requested_action-error').hidden = true;
+                    if(form.requested_cancel.checked){
+                        displayText.innerHTML += 'Requested Action - Cancelled Lines: '+form.cancelled_lines.value+'<br>';
+                    }else if(form.requested_cor.checked){
+                        displayText.innerHTML += 'Requested Action - COR Lines: '+form.cor_lines.value+'<br>';
+                    }else if(form.requested_both.checked){
+                        displayText.innerHTML += 'Requested Action - COR Lines: '+form.both_cor_lines.value+' Cancelled Lines: '+form.both_cancelled_lines.value+'<br>';
+                    }else if(form.requested_portout.checked){
+                        displayText.innerHTML += 'Requested Action - Port Out Date: '+form.portout_date.value+'<br>';
+                    }else if(form.requested_final.checked){
+                        displayText.innerHTML += 'Requested Action - Final attempt, email sent to CR. Set follow up Date: '+form.backend_date.value+'<br>';
+                    }
+                }else if(form.requested_action.value.length === 0){
+                    document.getElementById('requested_action-error').hidden = false;
+                    document.getElementById('requested_action-error').innerText = "Please select the requested action.";
+                    validate = true;
+                }
+
+                //Autopay Cancelled
+                if(autopay_cancelled.checked){
+                    displayText.innerHTML += 'Autopay Cancelled<br>';
+                }
+                
+                //Updated Billing Address
+                if(alternate_billing_address.checked){
+                    displayText.innerHTML += 'Added Alternate Billing Address<br>';
+                }
+                
+                //Updated Billing Parameters
+                if(updated_billing_parameters.checked){
+                    displayText.innerHTML += 'Billing Parameters Changed<br>';
+                   
+                }
+                
+                //Special Instructions
+                if(special_instruction.checked){
+                    displayText.innerHTML += 'Special Instructions: The BRP is reported deceased. Do not process any upgrades/exchanges, add lines or change SIM cards. If the BAN is cancelled, do not resume; engage NORT via the Deceased BRP Request Form or have the customer call NORT from the number they were reached at from the initial submission. If the BAN is cancelled, DO NOT RESUME; engage an available member of leadership. <br>';
+                }
+
+                //EIP Status 
+                if(eip_status.value.length > 0){
+                    document.getElementById('eip_status-error').hidden = true;
+                    if(form.eip_transferred.checked){
+                        displayText.innerHTML += 'EIP Transferred - Email: '+form.eip_transfer_email.value+'<br>';
+                        //DEIPCR Credit 
+                        if(deipcr_credit.value.length > 0){
+                            document.getElementById('deipcr_credit-error').hidden = true;
+                            if(form.deipcr_applied.checked){
+                                const credit_memo = form.querySelectorAll('[id*="credit_"]');
+                                console.log(form.querySelectorAll('[id*="credit_"]'))
+                                displayText.innerHTML += 'DEIPCR Applied - Lines: '+form.deipcr_applied_lines.value+', ';
+                                for(input of credit_memo){
+                                    displayText.innerHTML += input.labels[0].innerText + input.value +', '
+                                }
+                                displayText.innerHTML = displayText.innerHTML.slice(0, -2);
+                                displayText.innerHTML += '<br>'
+                                    
+                            }else if(form.deipcr_ineligible.checked){
+                                displayText.innerHTML += 'DEIPCR Ineligible - Lines: '+form.deipcr_ineligible_lines.value+
+                                    ' Reason: '+form.deipcr_ineligible_reason.value+'<br>';
+                            }else if(form.deipcr_na.checked){
+                                displayText.innerHTML += 'DEIPCR N/A<br>';
+                            }
+                        }else if(deipcr_credit.value.length === 0){
+                            displayText.innerHTML += 'DEIPCR N/A<br>';
+                        }
+                    }else if(form.eip_closed.checked){
+                        displayText.innerHTML += 'EIP Closed<br>';
+                    }else if(form.eip_na.checked){
+                        displayText.innerHTML += 'EIP N/A<br>';
+                    }
+                }else if(eip_status.value.length === 0){
+                    displayText.innerHTML += 'EIP N/A<br>';
+                } 
+                
+                //JOD Return Status 
+                if(jod_status.value.length > 0){
+                    if(form.jod_return_complete.checked){
+                        displayText.innerHTML += 'JOD Return Complete - Order Number: '+form.jod_ordernumber.value+'<br>';
+                    }else if(form.jod_return_incomplete.checked){
+                        displayText.innerHTML += 'JOD Return Incomplete - Reason: '+form.jod_reason.value+'<br>';
+                    }else if(form.jod_na.checked){
+                        displayText.innerHTML += 'JOD Return N/A<br>';
+                    }                   
+                }else if(jod_status.value.length === 0){
                     displayText.innerHTML += 'JOD Return N/A<br>';
                 }
-                //setNewRow(display, displayRow, displayText);
 
-            }else if(jod_status.value.length === 0){
-                document.getElementById('jod_status-error').hidden = false;
-                document.getElementById('jod_status-error').innerText = "Please select the JOD status.";
-                validate = true;
-            } 
-
-            //HSI Return Status 
-            if(hsi_status.value.length > 0){
-                document.getElementById('hsi_status-error').hidden = true;
-                if(document.getElementById('hsi_return_processed').checked){
-                    displayText.innerHTML += 'HSI Return Processed - Order Number: '+document.getElementById('hsi_ordernumber').value+'<br>';
-                }else if(document.getElementById('hsi_return_unprocessed').checked){
-                    displayText.innerHTML += 'HSI Return Not Processed - Reason: '+document.getElementById('hsi_reason').value+'<br>';
-                }else if(document.getElementById('hsi_na').checked){
+                //HSI Return Status 
+                if(hsi_status.value.length > 0){
+                    if(form.hsi_return_processed.checked){
+                        displayText.innerHTML += 'HSI Return Processed - Order Number: '+form.hsi_ordernumber.value+'<br>';
+                    }else if(form.hsi_return_unprocessed.checked){
+                        displayText.innerHTML += 'HSI Return Not Processed - Reason: '+form.hsi_reason.value+'<br>';
+                    }else if(form.hsi_na.checked){
+                        displayText.innerHTML += 'HSI Return N/A<br>';
+                    } 
+                   
+                }else if(hsi_status.value.length === 0){
                     displayText.innerHTML += 'HSI Return N/A<br>';
-                } 
-                //setNewRow(display, displayRow, displayText);
-
-            }else if(hsi_status.value.length === 0){
-                document.getElementById('hsi_status-error').hidden = false;
-                document.getElementById('hsi_status-error').innerText = "Please select the HSI return status.";
-                validate = true;
-            }
-            
-            //BAN Cancelled as FACD 
-            if(ban_as_facd.value.length > 0){
-                document.getElementById('ban_as_facd-error').hidden = true;
-                if(document.getElementById('ban_cancelled').checked){
-                    displayText.innerHTML += 'BAN cancelled as FACD<br>';
-                }else if(document.getElementById('ban_followup').checked){
-                    displayText.innerHTML += 'BAN follow up, CR email sent<br>';
-                }else if(document.getElementById('ban_na').checked){
-                    displayText.innerHTML += 'BAN N/A<br>';
                 }
-                //setNewRow(display, displayRow, displayText);
-
-            }else if(ban_as_facd.value.length === 0){
-                document.getElementById('ban_as_facd-error').hidden = false;
-                document.getElementById('ban_as_facd-error').innerText = "Please select a field.";
-                validate = true;
-            }
-
-            //Updated Sharepoint 
-            if(sharepoint.value.length > 0){
-                document.getElementById('sharepoint-error').hidden = true;
-                if(parseInt(sharepoint.value) === 1){
-                    displayText.innerHTML += 'Sharepoint Updated<br>';
-                }else if(parseInt(sharepoint.value) === 2){
-                    displayText.innerHTML += 'Sharepoint follow up, CR email sent<br>'; 
+                
+                //BAN Cancelled as FACD 
+                if(ban_as_facd.value.length > 0){
+                    document.getElementById('ban_as_facd-error').hidden = true;
+                    if(form.ban_cancelled.checked){
+                        displayText.innerHTML += 'BAN cancelled as FACD - Effective Date: '+form.ban_date.value+'<br>';
+                    }else if(form.ban_followup.checked){
+                        displayText.innerHTML += 'BAN follow up, CR email sent<br>';
+                    }else if(form.ban_na.checked){
+                        displayText.innerHTML += 'BAN N/A<br>';
+                    }
+                }else if(ban_as_facd.value.length === 0){
+                    document.getElementById('ban_as_facd-error').hidden = false;
+                    document.getElementById('ban_as_facd-error').innerText = "Please select a field.";
+                    validate = true;
                 }
-                //setNewRow(display, displayRow, displayText); 
 
-            }/*else if(parseInt(sharepoint.value) <= 0){
-                document.getElementById('sharepoint-error').hidden = false;
-                document.getElementById('sharepoint-error').innerText = "Please select a field.";
-                display.innerHTML = '&nbsp;';
-            }*/
+                //Updated Sharepoint 
+                if(form.sharepoint_updated.value.length > 0){
+                    console.log(form.sharepoint_updated.value);
+                    document.getElementById('sharepoint-error').hidden = true;
+                    if(form.sharepoint_updated.value === '0'){
+                        displayText.innerHTML += 'Sharepoint Complete<br>';
+                    }else if(form.sharepoint_updated.value === '1'){   
+                        displayText.innerHTML += 'Sharepoint In Progress';
+                        if(form.sharepoint_followup.checked){
+                            displayText.innerHTML += ' - Follow up, CR email sent'; 
+                        }
+                        displayText.innerHTML += '<br>';
+                    }else if(form.sharepoint_updated.value === '2'){
+                        displayText.innerHTML += 'Sharepoint Invalid<br>';
+                    } 
+                    
+                }else if(form.sharepoint_updated.value.length === 0){
+                    document.getElementById('sharepoint-error').hidden = false;
+                    document.getElementById('sharepoint-error').innerText = "Please select a field.";
+                    validate = true;
+                }
 
-            //Followed COR Policy
-            if(cor_policy.checked){
-                displayText.innerHTML += 'COR policy followed<br>'
-                //setNewRow(display, displayRow, displayText);
+                //Followed COR Policy
+                if(cor_policy.checked){
+                    displayText.innerHTML += 'COR policy followed<br>'
+                   
+                }
             }
             
             //Overall Status
             if(overall_status.value.length > 0){
                 document.getElementById('overall_status-error').hidden = true;
-                if(parseInt(overall_status.value) === 1){
+                if(overall_status.value === '1'){
                     displayText.innerHTML += 'Overall Status: Complete<br>';
 
-                }else if(parseInt(overall_status.value) === 2){
+                }else if(overall_status.value === '2'){
                     displayText.innerHTML += 'Overall Status: In Progress - Callback Scheduled<br>';
 
-                }else if(parseInt(overall_status.value) === 3){
+                }else if(overall_status.value === '3'){
                     displayText.innerHTML += 'Overall Status: In Progress - Backend Processing<br>';
                 }
-                //setNewRow(display, displayRow, displayText);
+               
 
-            }else if(parseInt(overall_status.value) <= 0){
+            }else if(overall_status.value.length <= 0){
                 document.getElementById('overall_status-error').hidden = false;
                 document.getElementById('overall_status-error').innerText = "Please select the status.";
                 validate = true;
             }
             
             //Additional Memos
-            if(document.getElementById('additional_memo').value.length > 0){
-                const linesSeparated = document.getElementById('additional_memo').value.split('\n');
-                displayText.innerHTML += 'Additional Memos: '+linesSeparated.join(', ');
-                //setNewRow(display, displayRow, displayText);
+            if(form.additional_memo.value.length > 0){
+                const linesSeparated = form.additional_memo.value.split('\n');
+                displayText.innerHTML += 'Additional Memos: '+linesSeparated.filter(word => word.length > 0).join(', ');
+               
             }
             
-            setNewRow(display, displayRow, displayText);
+            
+
             if(!validate){
+                displayRow.appendChild(displayText.cloneNode(true));
                 display.appendChild(displayRow);
                 displayRow.scrollIntoView();
                 navigator.clipboard.writeText(displayRow.children[0].innerHTML.replaceAll('<br>', '\n')); 
-            }else{
-                console.log(displayRow.children[0]);
             }
             
 

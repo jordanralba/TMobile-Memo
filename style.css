@@ -49,8 +49,10 @@ img {
 }
 a {
     text-decoration: none;
-    color: #c1cff1;
-    
+    color: #c1cff1;   
+}
+p{
+    margin-bottom: 0;
 }
 table, th, td {
     border: 1px solid #cdcdcd;
@@ -92,24 +94,24 @@ input[type=tel],
 select{
     background-color: #cdcdcd;
     border-radius: 5px;
-    width: 100%;
+    max-width: 100%;
 }
 
-input[type=reset], button{
+button{
     background-color: #cdcdcd;
     color: #1b1b1b;
     padding: 5% 12.5%;
     border: #1b1b1b 5px solid;
     border-radius: 50px;
-}input[type=reset]:hover, button:hover{
-    background-color: #1b1b1b;
+}button:hover{
+    background-color: #272727;
     color: #fff;
     padding: 5% 12.5%;
     border: #fff 5px solid;
     border-radius: 50px;
-    scale: .9;
+    scale: .95;
 }
-#lexid, #website, #msisdn, #executive{
+#lexid, #website, #msisdn, #executive, #sms, [id*="credit_"]{
     width: auto;
 }
 
