@@ -1,4 +1,5 @@
 const form = document.getElementById('memo-form');
+const genBut = document.getElementById('generate-button');
 
 const call_direction = form.call_direction;
 const contact_attempt = form.contact_attempt;
@@ -64,13 +65,13 @@ call_result_radio.addEventListener('click', (event)=>{
     invalid_dependent.hidden = true;
     resolved_dependent.hidden = true;
     const resultVal = parseInt(call_result.value);
-    if(resultVal <= 1){
+    if(resultVal < 1){
         call_detail_inputs.hidden = false;
         callback_date_div.hidden = false;
         if(resultVal === 0){
             callback_date_div.hidden = true;
         }
-    }else if(resultVal >= 2) {
+    }else if(resultVal >= 1) {
         call_detail_inputs.hidden = true;
         callback_date_div.hidden = false;
         if(resultVal === 2){
@@ -84,6 +85,7 @@ call_result_radio.addEventListener('click', (event)=>{
             callback_date_div.hidden = true;
         }else if(resultVal === 6){
             callback_date_div.hidden = true;
+            call_detail_inputs.hidden = false;
         }
     }
 });
@@ -154,8 +156,11 @@ if(special_instruction.checked){
 
 eip_radio.addEventListener('click', (event)=>{
     if(eip_status[0].checked){
-        document.getElementById('eip_transfer_email-input').hidden = false;
         eip_dependent.hidden = false;
+        document.getElementById('eip_transfer_email-input').hidden = false;
+    }else if(eip_status[1].checked){
+        eip_dependent.hidden = false;
+         document.getElementById('eip_transfer_email-input').hidden = true;
     }else{
         document.getElementById('eip_transfer_email-input').hidden = true;
         eip_dependent.hidden = true;
@@ -224,7 +229,7 @@ sharepoint_radio.addEventListener('click', (event)=>{
 
 
 
-function generateMemo() {
+genBut.addEventListener('click', ()=> {
     const display = document.getElementById('display-container');
     display.innerHTML = '&nbsp;';
     const displayRow = document.createElement('div');
@@ -236,9 +241,9 @@ function generateMemo() {
     //Call Direction
     if(call_direction.value.length > 0){
         document.getElementById('call_direction-error').hidden = true;
-        if(form.inbound){
+        if(call_direction[0].checked){
             displayText.innerHTML += 'DECEASE BRP Request Inbound:<br>';
-        }else if(form.outbound){
+        }else if(call_direction[1].checked){
             displayText.innerHTML += 'DECEASE BRP Request Outbound:<br>';
         }
     
@@ -289,8 +294,8 @@ function generateMemo() {
         }else if(form.no_action.checked){
             displayText.innerHTML += 'Results of Call: Customer chose no action, callback scheduled on '+form.callback_date.value+'<br>';
         }else if(form.voicemail.checked){
-            displayText.innerHTML += 'Results of Call: Un-carrier Outbound Resolution Team called cust and left V/M on [insert customer’s requested contact number] to assist in resolution of a Deceased BRP acct request. If the cust has ? or to proceed with resolution, they can return our call directly if dialing from the same device VM left on, at (800) 298-9746 during the hours of Mon-Fri 6am-4pm PT and Saturday 8am-4pm PT. NORT No Contact SMS send to '+
-            form.sms.value + ' Callback scheduled on '+form.callback_date.value+'<br>';
+            displayText.innerHTML += `Results of Call: Un-carrier Outbound Resolution Team called cust and left V/M on ${phone_number.value} to assist in resolution of a Deceased BRP acct request. If the cust has ? or to proceed with resolution, they can return our call directly if dialing from the same device VM left on, at (800) 298-9746 during the hours of Mon-Fri 6am-4pm PT and Saturday 8am-4pm PT. NORT No Contact SMS send to `+
+            form.sms.value + ` Callback scheduled on ${form.callback_date.value}<br>`;
         }else if(form.no_action.checked){
             displayText.innerHTML += 'Results of Call: Could not reach/leave message, callback scheduled on '+form.callback_date.value+'<br>';
         }else if(form.call_invalid.checked){
@@ -386,14 +391,23 @@ function generateMemo() {
             document.getElementById('eip_status-error').hidden = true;
             if(form.eip_transferred.checked){
                 displayText.innerHTML += 'EIP Transferred - Email: '+form.eip_transfer_email.value+'<br>';
-                //DEIPCR Credit 
+            }else if(form.eip_closed.checked){
+                displayText.innerHTML += 'EIP Closed<br>';
+            }else if(form.eip_na.checked){
+                displayText.innerHTML += 'EIP N/A<br>';
+            }
+        }else if(eip_status.value.length === 0){
+            displayText.innerHTML += 'EIP N/A<br>';
+        } 
+        
+        //DEIPCR Credit 
                 if(deipcr_credit.value.length > 0){
                     document.getElementById('deipcr_credit-error').hidden = true;
                     if(form.deipcr_applied.checked){
                         const credit_memo = form.querySelectorAll('[id*="credit_"]');
                         displayText.innerHTML += 'DEIPCR Applied - Lines: '+form.deipcr_applied_lines.value+', ';
                         for(input of credit_memo){
-                            displayText.innerHTML += input.labels[0].innerText + input.value +', '
+                            displayText.innerHTML += input.labels[0].innerHTML.replaceAll('&nbsp;', ' ') + input.value +', '
                         }
                         displayText.innerHTML = displayText.innerHTML.slice(0, -2);
                         displayText.innerHTML += '<br>'
@@ -407,15 +421,7 @@ function generateMemo() {
                 }else if(deipcr_credit.value.length === 0){
                     displayText.innerHTML += 'DEIPCR N/A<br>';
                 }
-            }else if(form.eip_closed.checked){
-                displayText.innerHTML += 'EIP Closed<br>';
-            }else if(form.eip_na.checked){
-                displayText.innerHTML += 'EIP N/A<br>';
-            }
-        }else if(eip_status.value.length === 0){
-            displayText.innerHTML += 'EIP N/A<br>';
-        } 
-        
+
         //JOD Return Status 
         if(jod_status.value.length > 0){
             if(form.jod_return_complete.checked){
@@ -525,4 +531,4 @@ function generateMemo() {
         displayRow.scrollIntoView();
         navigator.clipboard.writeText(displayRow.children[0].innerHTML.replaceAll('<br>', '\n')); 
     }
-}
+});
